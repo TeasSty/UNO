@@ -249,12 +249,16 @@ export const galleryItems = [
   { src: 'images/work-20.webp', alt: 'Классический френч', cat: 'nails' },
 ]
 
-/** Hero rotates among non-nails atmosphere shots when available. */
+/**
+ * Hero: clean beauty results only — nail close-ups from VK portfolio.
+ * Avoid client-profile hair shots (plastic cape / LV top / awkward crop).
+ * Video: no local UNO reel; add muted autoplay only when they supply a VK clip.
+ */
 export const heroImages = [
-  { src: 'images/work-10.webp', position: 'center 22%' },
-  { src: 'images/work-09.webp', position: 'center 30%' },
-  { src: 'images/work-16.webp', position: 'center 20%' },
-  { src: 'images/work-17.webp', position: 'center 25%' },
+  { src: 'images/work-00.webp', position: 'center 40%' },
+  { src: 'images/work-11.webp', position: 'center 35%' },
+  { src: 'images/work-13.webp', position: 'center 45%' },
+  { src: 'images/work-06.webp', position: 'center 40%' },
 ]
 
 export const galleryFilters = [

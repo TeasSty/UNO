@@ -40,3 +40,7 @@ _find_gid.py
 *.njsproj
 *.sln
 *.sw?
+
+_preview/
+_vk_clips*.html
+_vk_videos.html

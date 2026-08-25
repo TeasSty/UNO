@@ -261,8 +261,8 @@ function About() {
       <div className="container about-layout">
         <figure className="about-photo">
           <img
-            src={asset('images/work-09.webp')}
-            alt="Работа с волосами в салоне УНО"
+            src={asset('images/work-11.webp')}
+            alt="Французский маникюр с красным акцентом — работа салона УНО"
             width="800"
             height="1000"
             loading="lazy"
