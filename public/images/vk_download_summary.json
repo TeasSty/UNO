@@ -1,0 +1,151 @@
+{
+  "ok": 0,
+  "fail": 36,
+  "downloaded": [],
+  "failed": [
+    {
+      "url": "https://sun9-51.userapi.com/s/v1/ig2/IuYdLWQZw_vQRW_b-bz6ICSfkCl6syW85GlCNjRnTGj4reoPTh14P0dK51Ynt_T77_pyYlhjFxOoJtziI1fwlKEt.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun1-86.userapi.com/s/v1/ig2/p7mOhjaL3WoaeW_btquvYZ0CbUrUUhso6sdiHqw_y4bVHkDFH1TGuhu8viK3ovLo_B1lvKooRAlIlpt_Logeq1Vn.jpg?quality=95&as=32x57,48x85,72x128,108x192,160x284,240x427,360x640,480x853,540x960,640x1138,720x1280&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-1.userapi.com/s/v1/ig2/nGTL_NMcy_nrWev2gVkN_iKter-6Ixq3xtmzX1mRYFq-tZrcjD7ZjgjY2Q5NF5Ns5TiYHG1xpRxsDSWoEugwlmnR.jpg?quality=95&as=32x25,48x38,72x56,108x85,160x125,240x188,360x282,480x376,540x423,640x501,720x564,1080x846,1280x1003&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-2.userapi.com/s/v1/ig2/t_s-6Leb-FVZV6wxaMvVpzJAMpOI3SOsjjL50BHDc4x3KhQvVZ4omIYbO8bUQKz2yTnlkuRe_1DO5l0y_yEweE24.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-2.userapi.com/s/v1/ig2/91a52cdqmLa4_ARe94f9yDL7RvLX4qLlCPpO1QjNv6k0Ex_O-vH4FCdKlD8sc8_Ufrsxph4rcM-NcoDVDV8Cgp_x.jpg?quality=95&as=32x26,48x39,72x59,108x88,160x130,240x196,360x294,480x391,540x440,640x522,720x587,1080x881,1280x1044&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-15.userapi.com/s/v1/ig2/nkhUD3QKtJhAbHvtQwwbenXBpUwckRapNrvsuQXroB3JZ2_X3Dc6wmyKvpY-NyVq_KTOZzpHiNT9xgsNRAfVEX0m.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-57.userapi.com/s/v1/ig2/3aT-Xv1amgVaWzhgnrpDPAZr2_xtAFLlxHWk_nY07BKO_4EGkYRVs1JAva3oH2I9SIoALnU9OikCEa1Ow-C2bTnv.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-88.userapi.com/s/v1/ig2/2H5l9v5lSqCLZJ5VGiTQak2BRR73mNwloNwIrCv4TCXEZP43qv57YZkRORr9Duzyck4iSn6sk_kTlPb2ChODoMM-.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-1.userapi.com/s/v1/ig2/2WJ62GgBlNkTvf79mdiQK2w57QIBNuyB6X9CbRe2OE-KBdghmxvyVbZw-lLqn0KtVp3WeJa1Oy973D60eUaALCnr.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-1.userapi.com/s/v1/ig2/9ct4vMY7-T_IUfYtyzUlqKIfQ9lSMVZiMTJ8JSmXrS9716FegUXYjPQnhPAdjZWpgcR4FsLZLxRjDgoBvN01Vole.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-80.userapi.com/s/v1/ig2/bzxnouQGU6G2pZzWNpi6h3-tcf-EagX1aMkiLeV9jtzstP4sUWFyP9Yt7NJiPSgI_FJbO9pDa3We_SUkiaU7wix2.jpg?quality=95&as=32x57,48x85,72x128,108x192,160x284,240x427,360x640,480x853,540x960,640x1138,720x1280,1080x1920,1280x2276,1440x2560&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-45.userapi.com/s/v1/ig2/GuTVfOB8y9T3MCwCnAZC8jAH-9oLrJfpdkJRgX5uGL90SGfuqE2sN8w5Bm_oS2Y6bqj7YdqLWOTD18sxTx8o4lci.jpg?quality=95&amp;as=32x40,48x60,72x90,108x135,160x200,240x300,360x450,480x600,540x675,640x800,720x900,1080x1350,1179x1474&amp;from=bu&amp;cs=640x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-7.userapi.com/s/v1/ig2/SthUjNvtcqHaEIIkAiCfenqvCl-caXOxLS8Rf9uRtbsnX8Dd5zH2iDpimrP8yfvDX8yhF91FjuE6z7o6jyiR5ftx.jpg?quality=95&as=32x57,48x85,72x128,108x192,160x284,240x427,360x640,480x853,540x960,640x1138,720x1280,1080x1920,1280x2276,1440x2560&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-44.userapi.com/s/v1/ig2/2OWT6xXqyn-OWKpK0-xzEH6npEJFbn46nwR_9q8A4roPVFxG_pzJvm6H86zQrtOsdB2xprq087Typc5RGxLLcXJR.jpg?quality=95&as=32x57,48x85,72x128,108x192,160x284,240x427,360x640,480x853,540x960,640x1138,720x1280,1080x1920,1179x2096&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-69.userapi.com/s/v1/ig2/l_0LK8BYffXXMbijFGPt_JDY_TAVEtSa3tqMv5xi7ApUhkNefciHOaAhJbVBGLcx-0vk-BypQphOz7u1lGsCb6HQ.jpg?quality=95&as=32x57,48x85,72x128,108x192,160x284,240x427,360x640,480x853,540x960,640x1138,720x1280,1080x1920,1179x2096&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-67.userapi.com/s/v1/ig2/MoA9fjibKt_PqVRKsswYoaqBuouvq_5YoIqwWHm0TDCReB1XswXj-3fkl_JMJD9l5IZOsZFAKZZMsquuYm-KFGo-.jpg?quality=95&as=32x30,48x45,72x68,108x102,160x151,240x226,360x340,480x453,540x510,640x604,720x679,1080x1019,1280x1208&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-39.userapi.com/s/v1/ig2/BM71DpHCOUCWZc0HAd2dXIwtbiW_fEQgNZdVe3QAq5YHTf0Hjy1XK0CLoNiiS5Mxo4_DZVWAUU3E0YVql4CYg9FE.jpg?quality=95&as=32x29,48x44,72x66,108x99,160x147,240x220,360x330,480x441,540x496,640x587,720x661,1080x991,1280x1175&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-1.userapi.com/s/v1/ig2/GxZM2lDPb0mAGLM4_wyVidIq9HxKfNwV0lqfpetsQ19-TSjC0B1f1C2X6YU-za6qArKz1KXZYaP0My7uPZQXVb1k.jpg?quality=95&as=32x27,48x41,72x62,108x93,160x137,240x206,360x309,480x412,540x463,640x549,720x618,1080x926,1280x1098&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-87.userapi.com/s/v1/ig2/9bCYbtVawQQEKWBecTHgy8Yjk1val1VxDOvlK_6or5cx6lCJcHdNoNpNDyJv1vIhaAkuPmkdHxP0dXo5kB8uc6ck.jpg?quality=95&as=32x24,48x36,72x54,108x81,160x120,240x180,360x270,480x360,540x405,640x480,720x540,1080x810,1280x960&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-50.userapi.com/s/v1/ig2/f6P6PXvcMwBLElOLYdgRAghUp6Wk-69ISkNWGtH7wCQLNG5aui_TCp6taTBPkybh5-RHRpHUmCVR1FXYLWO9jnFg.jpg?quality=95&as=32x57,48x85,72x128,108x192,160x284,240x427,360x640,480x853,540x960,640x1138,720x1280,1080x1920&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-50.userapi.com/s/v1/ig2/tiLjqh9TElMHsr4fCToP8dMBPOFTPhIKbFc5nDrS1hGd2oNQzt0Cgsma_-l3yUjLKK6qNaq545dFyOO8uIa-niQt.jpg?quality=95&as=32x57,48x85,72x128,108x192,160x284,240x427,360x640,480x853,540x960,640x1138,720x1280,1080x1920&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-7.userapi.com/s/v1/ig2/fKOf7eeCBGUeZzj2hLaxmfKGi5VEI75UTbUwBKaqPyO5KAyO570FpuIwokRm_9EuA2TBYn2bzdSogMxyuVHXGbRK.jpg?quality=95&as=32x57,48x85,72x128,108x192,160x284,240x427,360x640,480x853,540x960,640x1138,720x1280,1080x1920&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-10.userapi.com/s/v1/ig2/R0_sPbxJ4inaeGdFduxGRgsioCH5nnLiSN5ZBav3AL3zwj_KtYrTbWzUVdku1uunaPop2gx3ThnjfrRyU3hcZun1.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-11.userapi.com/s/v1/ig2/h2KO4wszz2DdQnQvyp9CfklI6BYa6vfqLnALeFu6TA9NizyUNUEOoCCpbUafrRMqY1-PBd2aFlT2XtGGtAL1u7AA.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-13.userapi.com/s/v1/ig2/zjp5-vhs8vyCrPXtB1AARURC0BW3Us8p84wKGaJDc-Y0deaRurWtV2teBJU6yM-xWXpA_AqJQ0XB-IyODV5PZTV-.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-15.userapi.com/s/v1/ig2/LSiprD5BvnYfuy0URLYtrgxK3x6O840iaV1AS0p4E1hxyc-oMCsuMbdT8unvG0fL_hgF0-hbJgO_rxid4CNz2NGx.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-17.userapi.com/s/v1/ig2/OfWITHNK-UfmbSAeLrQkqWpzP9KTNQ01jI4rhp-wuMg0KQrvojwsKsCeNAaYWYV4YaYXSPnlylX4rKVUgp28rEZ9.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-19.userapi.com/s/v1/ig2/HyAvaImm1qZSrbfDV-jROnqjW-SjhNxpFqTG_shnIbZxd1Iilmqo5S-VOug5inpP3s0g0DcYTgJXWH3Ux1dRRHvy.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-20.userapi.com/s/v1/ig2/BRJKyrUPcCf0y44rqHA-CVzPwExAkQHW8L2g_9flBvYSRsTUUhIlVsYjkE3k-xvWQ87rGk-V7_s5n3nDnudiUUjY.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-22.userapi.com/s/v1/ig2/Gb1lZZpgQ27Pz2ccPna_VQGZ1LsDL_LAbIYvvcqQ8ReKDNIZgcC-Kajt5Tzu7_GyOfSxydUmDL6qbeTNLAZ38LQY.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-22.userapi.com/s/v1/ig2/mMphpXKzUgQDDKzCKMVxTK2CJsOG8KCB2GJd_jVMAfwgu5ZTin2VUHQkCvomDKcEiOBOzU3-PivbTR86Aa-sOOu6.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-22.userapi.com/s/v1/ig2/zsuQQNEWrijVfIxdYnBH70pGD4IQAoROEO9s6BuZEYOJuQYdok4tutEn3HSatRKOt4kYXFdYOFrE07CS_bHI4axZ.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-23.userapi.com/s/v1/ig2/7EuENpERScHdySh8zDE64ymujzfNyhVVwBevSQNNx7qjCfaYbDN76jPDgt4oNll7FPQCgYsePMLqONFFe5DzJ5cW.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=360x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-24.userapi.com/s/v1/ig2/3PEDYeQzLVTN0V9C0J7EHXHxH2c4qr4kuR-eYVhyVljxCn8pMSRifXeupeNNOUn1P0HNM7V4MMQ50gY9InZMyCxy.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-24.userapi.com/s/v1/ig2/YHJBhkzHp_1kun5-WDT0oGF5tMC06k0M1yY9IBQNgu2uMfQkrXEUE9_GfOG88CN2zu0H1zsgRkVjDPwUE9Q5gF52.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://sun9-24.userapi.com/s/v1/ig2/c2iPb4GsLBDYzP01HAgD0pdMCg8X5xDIF-ybJU_0WgFk1JMnaMcdLXmhRNiLiS71C7WtV4T3R1PWR1dmyXHatU61.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,960x1280&from=bu&cs=240x0",
+      "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>"
+    }
+  ]
+}

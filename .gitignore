@@ -1,0 +1,42 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+!.env.example
+.netlify
+
+# Scratch / research helpers (not part of the site)
+_*.py
+_*.txt
+_photo_*.txt
+_desc_*.txt
+_field_*.txt
+_names.txt
+_research.txt
+_vk_extract.txt
+_decode_fields.py
+_download_vk_photos.py
+_extract_vk.py
+_find_gid.py
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
