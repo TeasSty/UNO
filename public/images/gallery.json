@@ -1,122 +1,19 @@
 [
-  {
-    "file": "work-00.webp",
-    "w": 960,
-    "h": 1280,
-    "src": "src_00"
-  },
-  {
-    "file": "work-02.webp",
-    "w": 1280,
-    "h": 1003,
-    "src": "src_02"
-  },
-  {
-    "file": "work-03.webp",
-    "w": 960,
-    "h": 1280,
-    "src": "src_03"
-  },
-  {
-    "file": "work-04.webp",
-    "w": 1280,
-    "h": 1044,
-    "src": "src_04"
-  },
-  {
-    "file": "work-05.webp",
-    "w": 1199,
-    "h": 1600,
-    "src": "src_05"
-  },
-  {
-    "file": "work-06.webp",
-    "w": 1199,
-    "h": 1600,
-    "src": "src_06"
-  },
-  {
-    "file": "work-07.webp",
-    "w": 1199,
-    "h": 1600,
-    "src": "src_07"
-  },
-  {
-    "file": "work-08.webp",
-    "w": 1199,
-    "h": 1600,
-    "src": "src_08"
-  },
-  {
-    "file": "work-09.webp",
-    "w": 899,
-    "h": 1600,
-    "src": "src_10"
-  },
-  {
-    "file": "work-10.webp",
-    "w": 899,
-    "h": 1600,
-    "src": "src_12"
-  },
-  {
-    "file": "work-11.webp",
-    "w": 1280,
-    "h": 1208,
-    "src": "src_15"
-  },
-  {
-    "file": "work-12.webp",
-    "w": 1280,
-    "h": 1175,
-    "src": "src_16"
-  },
-  {
-    "file": "work-13.webp",
-    "w": 1280,
-    "h": 1098,
-    "src": "src_17"
-  },
-  {
-    "file": "work-14.webp",
-    "w": 1280,
-    "h": 960,
-    "src": "src_18"
-  },
-  {
-    "file": "work-15.webp",
-    "w": 960,
-    "h": 1280,
-    "src": "src_22"
-  },
-  {
-    "file": "work-16.webp",
-    "w": 960,
-    "h": 1280,
-    "src": "src_23"
-  },
-  {
-    "file": "work-17.webp",
-    "w": 960,
-    "h": 1280,
-    "src": "src_24"
-  },
-  {
-    "file": "work-18.webp",
-    "w": 960,
-    "h": 1280,
-    "src": "src_25"
-  },
-  {
-    "file": "work-19.webp",
-    "w": 960,
-    "h": 1280,
-    "src": "src_26"
-  },
-  {
-    "file": "work-20.webp",
-    "w": 960,
-    "h": 1280,
-    "src": "src_27"
-  }
+  { "file": "work-00.webp", "w": 960, "h": 1280, "src": "src_00" },
+  { "file": "work-02.webp", "w": 1280, "h": 1003, "src": "src_02" },
+  { "file": "work-03.webp", "w": 960, "h": 1280, "src": "src_03" },
+  { "file": "work-04.webp", "w": 1280, "h": 1044, "src": "src_04" },
+  { "file": "work-05.webp", "w": 1199, "h": 1600, "src": "src_05" },
+  { "file": "work-06.webp", "w": 1199, "h": 1600, "src": "src_06" },
+  { "file": "work-07.webp", "w": 1199, "h": 1600, "src": "src_07" },
+  { "file": "work-08.webp", "w": 1199, "h": 1600, "src": "src_08" },
+  { "file": "work-11.webp", "w": 1280, "h": 1208, "src": "src_15" },
+  { "file": "work-12.webp", "w": 1280, "h": 1175, "src": "src_16" },
+  { "file": "work-13.webp", "w": 1280, "h": 1098, "src": "src_17" },
+  { "file": "work-14.webp", "w": 1280, "h": 960, "src": "src_18" },
+  { "file": "work-15.webp", "w": 960, "h": 1280, "src": "src_22" },
+  { "file": "work-16.webp", "w": 960, "h": 1280, "src": "src_23" },
+  { "file": "work-18.webp", "w": 960, "h": 1280, "src": "src_25" },
+  { "file": "work-19.webp", "w": 960, "h": 1280, "src": "src_26" },
+  { "file": "work-20.webp", "w": 960, "h": 1280, "src": "src_27" }
 ]

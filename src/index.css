@@ -65,7 +65,7 @@ button {
 }
 
 .section {
-  padding: 4.5rem 0;
+  padding: 4.75rem 0;
   scroll-margin-top: calc(var(--header-h) + 8px);
 }
 
@@ -297,7 +297,7 @@ button {
   text-decoration: none;
 }
 
-/* Hero — full-bleed, not split */
+/* Hero — full-bleed still + circular clip accent */
 .hero {
   position: relative;
   isolation: isolate;
@@ -337,26 +337,35 @@ button {
   background:
     linear-gradient(
       180deg,
-      rgba(20, 18, 16, 0.28) 0%,
-      rgba(20, 18, 16, 0.18) 38%,
-      rgba(20, 18, 16, 0.72) 100%
+      rgba(20, 18, 16, 0.32) 0%,
+      rgba(20, 18, 16, 0.22) 36%,
+      rgba(20, 18, 16, 0.78) 100%
     ),
-    linear-gradient(90deg, rgba(20, 18, 16, 0.45) 0%, rgba(20, 18, 16, 0.12) 55%, transparent 100%);
+    linear-gradient(95deg, rgba(20, 18, 16, 0.55) 0%, rgba(20, 18, 16, 0.2) 48%, transparent 78%);
+}
+
+.hero-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 1.25rem 1.5rem;
+  width: min(1120px, calc(100% - 2rem));
+  padding: 2.75rem 0 2.85rem;
 }
 
 .hero-content {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 3.5rem 0 3.25rem;
-  max-width: 36rem;
+  max-width: 34rem;
   color: #faf8f6;
+  min-width: 0;
 }
 
 .h1-brand {
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(4rem, 16vw, 7rem);
+  font-size: clamp(3.75rem, 15vw, 7rem);
   line-height: 0.88;
   letter-spacing: -0.03em;
   font-weight: 600;
@@ -365,16 +374,16 @@ button {
 
 .h1-sub {
   display: block;
-  margin-top: 0.75rem;
-  font-size: clamp(1.05rem, 2.8vw, 1.35rem);
+  margin-top: 0.7rem;
+  font-size: clamp(1.02rem, 2.6vw, 1.32rem);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.9);
   letter-spacing: -0.01em;
   max-width: 18ch;
 }
 
 .lead {
-  margin: 1rem 0 0;
+  margin: 0.95rem 0 0;
   color: rgba(255, 255, 255, 0.78);
   line-height: 1.5;
   font-size: 1.02rem;
@@ -386,11 +395,11 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: 1.5rem;
+  margin-top: 1.4rem;
 }
 
 .hero-meta {
-  margin: 1.35rem 0 0;
+  margin: 1.25rem 0 0;
   padding: 0;
   color: rgba(255, 255, 255, 0.62);
   font-size: 0.8rem;
@@ -401,6 +410,37 @@ button {
 .hero-meta-sep {
   margin: 0 0.45rem;
   opacity: 0.7;
+}
+
+/* Circular VK clip — soft editorial frame, not story sticker */
+.hero-clip {
+  margin: 0;
+  justify-self: end;
+  align-self: end;
+  flex-shrink: 0;
+}
+
+.hero-clip-ring {
+  width: clamp(7.75rem, 28vw, 11.5rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  isolation: isolate;
+  background: #1a1715;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 0 0 6px rgba(255, 255, 255, 0.06),
+    0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.hero-clip-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 28%;
+  display: block;
+  transform: scale(1.02);
 }
 
 /* Services / editorial tabs */
@@ -677,7 +717,7 @@ button {
 .about-photo {
   margin: 0;
   overflow: hidden;
-  border-radius: calc(var(--radius) + 2px);
+  border-radius: 2px;
 }
 
 .about-photo img {
@@ -697,10 +737,10 @@ button {
 .gallery-item {
   margin: 0;
   padding: 0;
-  border-radius: var(--radius);
+  border-radius: 2px;
   overflow: hidden;
   background: var(--bg-alt);
-  border: 1px solid var(--line);
+  border: 0;
   cursor: zoom-in;
   display: block;
   width: 100%;
@@ -952,9 +992,24 @@ button {
     height: 420px;
   }
 
+  .hero-stage {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: end;
+    gap: 2rem;
+    padding: 4rem 0 4.25rem;
+  }
+
   .hero-content {
-    padding-bottom: 4.5rem;
-    max-width: 42rem;
+    max-width: 40rem;
+  }
+
+  .hero-clip-ring {
+    width: clamp(12.5rem, 22vw, 16.5rem);
+  }
+
+  .hero-clip {
+    justify-self: end;
+    margin-bottom: 0.35rem;
   }
 }
 
@@ -975,8 +1030,12 @@ button {
     display: flex;
   }
 
-  .hero-content {
-    padding: 5rem 0 5rem;
+  .hero-stage {
+    padding: 5rem 0 5.25rem;
+  }
+
+  .hero-clip-ring {
+    width: clamp(14rem, 18vw, 17.5rem);
   }
 
   .about-layout {
@@ -1013,6 +1072,10 @@ button {
 
   .hero-img {
     animation: none;
+    transform: none;
+  }
+
+  .hero-clip-video {
     transform: none;
   }
 

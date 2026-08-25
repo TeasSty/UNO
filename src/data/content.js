@@ -225,7 +225,7 @@ export const aboutFacts = [
   },
 ]
 
-/** Gallery: atmosphere / results only — never price-list screenshots. Paths relative to site base. */
+/** Gallery: finished results only — never price screenshots or process/cape shots. */
 export const galleryItems = [
   { src: 'images/work-00.webp', alt: 'Маникюр — красный гель-лак', cat: 'nails' },
   { src: 'images/work-02.webp', alt: 'Маникюр с шиммером', cat: 'nails' },
@@ -235,24 +235,26 @@ export const galleryItems = [
   { src: 'images/work-06.webp', alt: 'Молочный маникюр', cat: 'nails' },
   { src: 'images/work-07.webp', alt: 'Светлый маникюр', cat: 'nails' },
   { src: 'images/work-08.webp', alt: 'Светлый маникюр с хлопьями', cat: 'nails' },
-  { src: 'images/work-09.webp', alt: 'Окрашивание волос в процессе', cat: 'hair' },
-  { src: 'images/work-10.webp', alt: 'Стрижка и окрашивание — пепельный блонд', cat: 'hair' },
   { src: 'images/work-11.webp', alt: 'Французский маникюр с красным акцентом', cat: 'nails' },
   { src: 'images/work-12.webp', alt: 'Тёмный гель-лак', cat: 'nails' },
   { src: 'images/work-13.webp', alt: 'Бургунди-маникюр', cat: 'nails' },
   { src: 'images/work-14.webp', alt: 'Нюдовый маникюр на журнале', cat: 'nails' },
   { src: 'images/work-15.webp', alt: 'Ярко-розовый маникюр', cat: 'nails' },
   { src: 'images/work-16.webp', alt: 'Стрижка — светлый боб', cat: 'hair' },
-  { src: 'images/work-17.webp', alt: 'Стрижка — тёмный боб в салоне', cat: 'hair' },
   { src: 'images/work-18.webp', alt: 'Голубой френч', cat: 'nails' },
   { src: 'images/work-19.webp', alt: 'Светлый маникюр с цветами', cat: 'nails' },
   { src: 'images/work-20.webp', alt: 'Классический френч', cat: 'nails' },
 ]
 
+/** Local VK clip (muted loop) — circular accent in the hero. */
+export const heroClip = {
+  src: 'video/uno-clip.mp4',
+  poster: 'video/uno-clip-poster.webp',
+  label: 'Атмосфера салона УНО',
+}
+
 /**
- * Hero: clean beauty results only — nail close-ups from VK portfolio.
- * Avoid client-profile hair shots (plastic cape / LV top / awkward crop).
- * Video: no local UNO reel; add muted autoplay only when they supply a VK clip.
+ * Hero stills: nail close-ups — cinematic backdrop behind the circular clip.
  */
 export const heroImages = [
   { src: 'images/work-00.webp', position: 'center 40%' },

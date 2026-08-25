@@ -22,5 +22,12 @@ VK community: https://vk.com/uno.saratov64 (public id `211216090`)
 - **Pillow**: LANCZOS upscale, mild contrast/color/unsharp, crop + light denoise on hair salon shots (`src_10` → `work-09.webp`, `src_12` → `work-10.webp`).
 - Real-ESRGAN skipped for install weight; Pillow was enough for web sizes.
 
-## Not inventing portfolio
-Gallery only uses photos downloaded from the community CDN URLs found in VK HTML — atmosphere and results only.
+## Video
+- VK clip `clip-211216090_456246067` downloaded via yt-dlp → `public/video/uno-clip.mp4` (720p, muted, ~2.5 MB).
+- Poster: `public/video/uno-clip-poster.webp` (square crop of an early bright frame).
+- Hero shows muted autoplay loop in a circular frame.
+
+## Gallery curation
+- Removed process/cape shots that hurt premium feel: former `work-09` (wet hair + plastic cape + sparkles), `work-10` (cape + clippings), `work-17` (cape, back view).
+- Kept finished nail results + one strong hair bob result (`work-16`).
+

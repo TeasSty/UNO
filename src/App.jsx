@@ -3,6 +3,7 @@ import {
   aboutFacts,
   galleryFilters,
   galleryItems,
+  heroClip,
   heroImages,
   nav,
   salon,
@@ -110,9 +111,28 @@ function Header({ menuOpen, setMenuOpen }) {
 }
 
 function Hero() {
+  const videoRef = useRef(null)
   const pick = useMemo(() => {
     const i = Math.floor(Date.now() / 86400000) % heroImages.length
     return heroImages[i]
+  }, [])
+
+  useEffect(() => {
+    const el = videoRef.current
+    if (!el) return undefined
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) {
+      el.removeAttribute('autoplay')
+      el.pause()
+      return undefined
+    }
+    el.muted = true
+    const play = () => {
+      el.play().catch(() => {})
+    }
+    play()
+    el.addEventListener('loadeddata', play)
+    return () => el.removeEventListener('loadeddata', play)
   }, [])
 
   return (
@@ -129,27 +149,48 @@ function Hero() {
         />
         <div className="hero-veil" />
       </div>
-      <div className="container hero-content">
-        <h1>
-          <span className="h1-brand">УНО</span>
-          <span className="h1-sub">{salon.slogan}</span>
-        </h1>
-        <p className="lead">{salon.tagline}. Саратов, {salon.addressShort}.</p>
-        <div className="hero-cta">
-          <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
-            Записаться во VK
-          </a>
-          <a className="btn btn-secondary btn-lg btn-on-dark" href="#services">
-            Услуги и цены
-          </a>
+      <div className="container hero-stage">
+        <div className="hero-content">
+          <h1>
+            <span className="h1-brand">УНО</span>
+            <span className="h1-sub">{salon.slogan}</span>
+          </h1>
+          <p className="lead">
+            {salon.tagline}. Саратов, {salon.addressShort} — волосы, ногти, лицо и тело в одном
+            салоне.
+          </p>
+          <div className="hero-cta">
+            <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
+              Записаться во VK
+            </a>
+            <a className="btn btn-secondary btn-lg btn-on-dark" href="#services">
+              Услуги и цены
+            </a>
+          </div>
+          <p className="hero-meta">
+            {salon.hours}
+            <span className="hero-meta-sep" aria-hidden="true">
+              ·
+            </span>
+            {salon.hoursNote}
+          </p>
         </div>
-        <p className="hero-meta">
-          {salon.hours}
-          <span className="hero-meta-sep" aria-hidden="true">
-            ·
-          </span>
-          {salon.hoursNote}
-        </p>
+        <figure className="hero-clip">
+          <div className="hero-clip-ring">
+            <video
+              ref={videoRef}
+              className="hero-clip-video"
+              src={asset(heroClip.src)}
+              poster={asset(heroClip.poster)}
+              muted
+              loop
+              playsInline
+              autoPlay
+              preload="metadata"
+              aria-label={heroClip.label}
+            />
+          </div>
+        </figure>
       </div>
     </section>
   )
@@ -270,10 +311,10 @@ function About() {
         </figure>
         <div className="about-copy">
           <p className="about-eyebrow">О салоне</p>
-          <h2>Полный цикл на Менякина, 4</h2>
+          <h2>Салон на Менякина, 4</h2>
           <p className="lead-sm">
-            Салон УНО в Саратове: стрижки и окрашивание, ногти, брови и ресницы, косметология,
-            эпиляция и солярий — без беготни по разным адресам.
+            УНО в Саратове: стрижки и окрашивание, ногти, брови и ресницы, косметология, эпиляция и
+            солярий — всё в одном месте.
           </p>
           <ul className="about-facts">
             {aboutFacts.map((f) => (
@@ -381,7 +422,7 @@ function Gallery() {
         <div className="section-head">
           <p className="section-kicker">Портфолио</p>
           <h2>Работы</h2>
-          <p>Фотографии из материалов сообщества УНО — атмосфера и результат.</p>
+          <p>Готовые работы мастеров УНО — маникюр и стрижки.</p>
         </div>
         <div className="tabs" role="tablist" aria-label="Фильтр галереи">
           {galleryFilters.map((f) => (
@@ -431,8 +472,7 @@ function Contacts() {
           <p className="section-kicker">Связь</p>
           <h2>Контакты и запись</h2>
           <p className="lead-sm">
-            Напишите во VK или позвоните — подберём время и мастера. Telegram — дополнительный канал
-            связи.
+            Напишите во VK — основной канал записи. Можно позвонить или написать в Telegram.
           </p>
           <dl className="contact-list">
             <div>
