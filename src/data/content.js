@@ -246,22 +246,12 @@ export const galleryItems = [
   { src: 'images/work-20.webp', alt: 'Классический френч', cat: 'nails' },
 ]
 
-/** Local VK clip (muted loop) — circular accent in the hero. */
+/** Local VK clip — full-bleed muted loop behind the hero. */
 export const heroClip = {
   src: 'video/uno-clip.mp4',
   poster: 'video/uno-clip-poster.webp',
   label: 'Атмосфера салона УНО',
 }
-
-/**
- * Hero stills: nail close-ups — cinematic backdrop behind the circular clip.
- */
-export const heroImages = [
-  { src: 'images/work-00.webp', position: 'center 40%' },
-  { src: 'images/work-11.webp', position: 'center 35%' },
-  { src: 'images/work-13.webp', position: 'center 45%' },
-  { src: 'images/work-06.webp', position: 'center 40%' },
-]
 
 export const galleryFilters = [
   { id: 'all', label: 'Все' },

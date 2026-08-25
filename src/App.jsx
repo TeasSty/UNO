@@ -4,7 +4,6 @@ import {
   galleryFilters,
   galleryItems,
   heroClip,
-  heroImages,
   nav,
   salon,
   serviceTabs,
@@ -112,10 +111,6 @@ function Header({ menuOpen, setMenuOpen }) {
 
 function Hero() {
   const videoRef = useRef(null)
-  const pick = useMemo(() => {
-    const i = Math.floor(Date.now() / 86400000) % heroImages.length
-    return heroImages[i]
-  }, [])
 
   useEffect(() => {
     const el = videoRef.current
@@ -138,27 +133,27 @@ function Hero() {
   return (
     <section className="hero" id="top">
       <div className="hero-media" aria-hidden="true">
-        <img
-          src={asset(pick.src)}
-          alt=""
-          className="hero-img"
-          style={{ objectPosition: pick.position }}
-          width="1600"
-          height="2000"
-          fetchPriority="high"
+        <video
+          ref={videoRef}
+          className="hero-video"
+          src={asset(heroClip.src)}
+          poster={asset(heroClip.poster)}
+          muted
+          loop
+          playsInline
+          autoPlay
+          preload="auto"
         />
         <div className="hero-veil" />
       </div>
       <div className="container hero-stage">
         <div className="hero-content">
+          <p className="hero-loc">Салон красоты · Саратов · {salon.addressShort}</p>
           <h1>
             <span className="h1-brand">УНО</span>
             <span className="h1-sub">{salon.slogan}</span>
           </h1>
-          <p className="lead">
-            {salon.tagline}. Саратов, {salon.addressShort} — волосы, ногти, лицо и тело в одном
-            салоне.
-          </p>
+          <p className="lead">{salon.tagline} — полный цикл услуг в одном салоне.</p>
           <div className="hero-cta">
             <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
               Записаться во VK
@@ -175,22 +170,51 @@ function Hero() {
             {salon.hoursNote}
           </p>
         </div>
-        <figure className="hero-clip">
-          <div className="hero-clip-ring">
-            <video
-              ref={videoRef}
-              className="hero-clip-video"
-              src={asset(heroClip.src)}
-              poster={asset(heroClip.poster)}
-              muted
-              loop
-              playsInline
-              autoPlay
-              preload="metadata"
-              aria-label={heroClip.label}
-            />
-          </div>
-        </figure>
+      </div>
+    </section>
+  )
+}
+
+function BookingSteps() {
+  const steps = [
+    { n: '01', t: 'Напишите во VK', d: 'Укажите услугу и удобное время.' },
+    { n: '02', t: 'Подберём мастера', d: 'Администратор подтвердит запись.' },
+    { n: '03', t: 'Приходите в салон', d: `${salon.addressShort}, ежедневно до 20:00.` },
+  ]
+  return (
+    <section className="section section-tight" id="booking" data-reveal>
+      <div className="container">
+        <div className="section-head section-head-compact">
+          <p className="section-kicker">Запись</p>
+          <h2>Три шага до визита</h2>
+        </div>
+        <ol className="steps">
+          {steps.map((s) => (
+            <li key={s.n} className="step">
+              <span className="step-n">{s.n}</span>
+              <div>
+                <h3 className="step-t">{s.t}</h3>
+                <p className="step-d">{s.d}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div className="section-cta">
+          <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
+            Написать во VK
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function QuoteBand() {
+  return (
+    <section className="quote-band" data-reveal aria-label="Слоган салона">
+      <div className="container">
+        <p className="quote-text">{salon.slogan}</p>
+        <p className="quote-sub">{salon.tagline}</p>
       </div>
     </section>
   )
@@ -311,10 +335,10 @@ function About() {
         </figure>
         <div className="about-copy">
           <p className="about-eyebrow">О салоне</p>
-          <h2>Салон на Менякина, 4</h2>
+          <h2>Полный цикл на Менякина, 4</h2>
           <p className="lead-sm">
-            УНО в Саратове: стрижки и окрашивание, ногти, брови и ресницы, косметология, эпиляция и
-            солярий — всё в одном месте.
+            Стрижки и окрашивание, ногти, брови и ресницы, косметология, эпиляция и солярий — одно
+            место, без беготни по городу.
           </p>
           <ul className="about-facts">
             {aboutFacts.map((f) => (
@@ -422,7 +446,7 @@ function Gallery() {
         <div className="section-head">
           <p className="section-kicker">Портфолио</p>
           <h2>Работы</h2>
-          <p>Готовые работы мастеров УНО — маникюр и стрижки.</p>
+          <p>Результаты мастеров — без скринов прайса и случайных кадров «в процессе».</p>
         </div>
         <div className="tabs" role="tablist" aria-label="Фильтр галереи">
           {galleryFilters.map((f) => (
@@ -603,7 +627,9 @@ export default function App() {
       <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
       <main>
         <Hero />
+        <BookingSteps />
         <Services tabId={serviceTabId} setTabId={setServiceTabId} />
+        <QuoteBand />
         <About />
         <Gallery />
         <Contacts />

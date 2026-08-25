@@ -65,8 +65,12 @@ button {
 }
 
 .section {
-  padding: 4.75rem 0;
+  padding: 5.25rem 0;
   scroll-margin-top: calc(var(--header-h) + 8px);
+}
+
+.section-tight {
+  padding: 3.5rem 0;
 }
 
 .section-alt {
@@ -297,7 +301,7 @@ button {
   text-decoration: none;
 }
 
-/* Hero — full-bleed still + circular clip accent */
+/* Hero — full-bleed VK clip */
 .hero {
   position: relative;
   isolation: isolate;
@@ -312,23 +316,15 @@ button {
   inset: 0;
   z-index: -1;
   overflow: hidden;
+  background: #141210;
 }
 
-.hero-img {
+.hero-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.06);
-  animation: kenburns 28s ease-in-out infinite alternate;
-}
-
-@keyframes kenburns {
-  from {
-    transform: scale(1.06) translate(0, 0);
-  }
-  to {
-    transform: scale(1.14) translate(-1.5%, -1%);
-  }
+  object-position: center 30%;
+  display: block;
 }
 
 .hero-veil {
@@ -337,35 +333,42 @@ button {
   background:
     linear-gradient(
       180deg,
-      rgba(20, 18, 16, 0.32) 0%,
-      rgba(20, 18, 16, 0.22) 36%,
-      rgba(20, 18, 16, 0.78) 100%
+      rgba(20, 18, 16, 0.22) 0%,
+      rgba(20, 18, 16, 0.12) 42%,
+      rgba(20, 18, 16, 0.88) 100%
     ),
-    linear-gradient(95deg, rgba(20, 18, 16, 0.55) 0%, rgba(20, 18, 16, 0.2) 48%, transparent 78%);
+    linear-gradient(100deg, rgba(20, 18, 16, 0.62) 0%, rgba(20, 18, 16, 0.2) 55%, transparent 82%);
+  pointer-events: none;
 }
 
 .hero-stage {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: 1.25rem 1.5rem;
+  display: block;
   width: min(1120px, calc(100% - 2rem));
-  padding: 2.75rem 0 2.85rem;
+  padding: 2.5rem 0 3rem;
 }
 
 .hero-content {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  max-width: 34rem;
+  max-width: 32rem;
   color: #faf8f6;
   min-width: 0;
+}
+
+.hero-loc {
+  margin: 0 0 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .h1-brand {
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(3.75rem, 15vw, 7rem);
+  font-size: clamp(3.6rem, 14vw, 6.5rem);
   line-height: 0.88;
   letter-spacing: -0.03em;
   font-weight: 600;
@@ -374,20 +377,20 @@ button {
 
 .h1-sub {
   display: block;
-  margin-top: 0.7rem;
-  font-size: clamp(1.02rem, 2.6vw, 1.32rem);
+  margin-top: 0.65rem;
+  font-size: clamp(1.05rem, 2.5vw, 1.35rem);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.92);
   letter-spacing: -0.01em;
-  max-width: 18ch;
+  max-width: 22ch;
 }
 
 .lead {
-  margin: 0.95rem 0 0;
+  margin: 0.85rem 0 0;
   color: rgba(255, 255, 255, 0.78);
-  line-height: 1.5;
+  line-height: 1.45;
   font-size: 1.02rem;
-  max-width: 28rem;
+  max-width: 24rem;
   font-weight: 500;
 }
 
@@ -395,13 +398,13 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: 1.4rem;
+  margin-top: 1.35rem;
 }
 
 .hero-meta {
-  margin: 1.25rem 0 0;
+  margin: 1.15rem 0 0;
   padding: 0;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.58);
   font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -412,35 +415,77 @@ button {
   opacity: 0.7;
 }
 
-/* Circular VK clip — soft editorial frame, not story sticker */
-.hero-clip {
+/* Booking steps */
+.steps {
+  list-style: none;
   margin: 0;
-  justify-self: end;
-  align-self: end;
-  flex-shrink: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.25rem;
 }
 
-.hero-clip-ring {
-  width: clamp(7.75rem, 28vw, 11.5rem);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  overflow: hidden;
-  position: relative;
-  isolation: isolate;
-  background: #1a1715;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.22),
-    0 0 0 6px rgba(255, 255, 255, 0.06),
-    0 18px 40px rgba(0, 0, 0, 0.35);
+.step {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: start;
+  padding-bottom: 1.15rem;
+  border-bottom: 1px solid var(--line);
 }
 
-.hero-clip-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 28%;
-  display: block;
-  transform: scale(1.02);
+.step:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.step-n {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--brand);
+  letter-spacing: -0.02em;
+}
+
+.step-t {
+  margin: 0 0 0.3rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.step-d {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.quote-band {
+  padding: 4rem 0;
+  background: var(--ink);
+  color: #fff;
+  text-align: center;
+}
+
+.quote-text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4.5vw, 2.75rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  max-width: 18ch;
+  margin-inline: auto;
+}
+
+.quote-sub {
+  margin: 0.85rem 0 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 700;
 }
 
 /* Services / editorial tabs */
@@ -993,23 +1038,29 @@ button {
   }
 
   .hero-stage {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    align-items: end;
-    gap: 2rem;
     padding: 4rem 0 4.25rem;
   }
 
   .hero-content {
-    max-width: 40rem;
+    max-width: 36rem;
   }
 
-  .hero-clip-ring {
-    width: clamp(12.5rem, 22vw, 16.5rem);
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
   }
 
-  .hero-clip {
-    justify-self: end;
-    margin-bottom: 0.35rem;
+  .step {
+    grid-template-columns: 1fr;
+    border-bottom: 0;
+    padding-bottom: 0;
+    border-right: 1px solid var(--line);
+    padding-right: 1.25rem;
+  }
+
+  .step:last-child {
+    border-right: 0;
+    padding-right: 0;
   }
 }
 
@@ -1032,10 +1083,6 @@ button {
 
   .hero-stage {
     padding: 5rem 0 5.25rem;
-  }
-
-  .hero-clip-ring {
-    width: clamp(14rem, 18vw, 17.5rem);
   }
 
   .about-layout {
@@ -1068,15 +1115,6 @@ button {
   .gallery-item img,
   [data-reveal] {
     transition: none;
-  }
-
-  .hero-img {
-    animation: none;
-    transform: none;
-  }
-
-  .hero-clip-video {
-    transform: none;
   }
 
   [data-reveal] {
