@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import Lenis from 'lenis'
+import Lightbox from 'yet-another-react-lightbox'
 import {
   aboutFacts,
   galleryFilters,
@@ -8,6 +10,8 @@ import {
   salon,
   serviceTabs,
 } from './data/content.js'
+import 'lenis/dist/lenis.css'
+import 'yet-another-react-lightbox/styles.css'
 
 const BOOK_VK = salon.booking
 const BOOK_TG = salon.telegram
@@ -17,6 +21,10 @@ const BOOK_PHONE = salon.phones[0].href
 function asset(path) {
   const base = import.meta.env.BASE_URL || '/'
   return `${base}${String(path).replace(/^\//, '')}`
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
 function useScrolled(threshold = 24) {
@@ -30,10 +38,56 @@ function useScrolled(threshold = 24) {
   return scrolled
 }
 
+/** Lenis on desktop only; destroyed when reduced-motion is on. */
+function useLenis() {
+  useEffect(() => {
+    const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const mqDesktop = window.matchMedia('(min-width: 960px)')
+    let lenis = null
+    let rafId = 0
+
+    const teardown = () => {
+      if (rafId) cancelAnimationFrame(rafId)
+      rafId = 0
+      if (lenis) {
+        lenis.destroy()
+        lenis = null
+      }
+      document.documentElement.classList.remove('lenis-active')
+    }
+
+    const setup = () => {
+      teardown()
+      if (mqReduce.matches || !mqDesktop.matches) return
+
+      lenis = new Lenis({
+        duration: 1.05,
+        smoothWheel: true,
+        touchMultiplier: 1.4,
+      })
+      document.documentElement.classList.add('lenis-active')
+
+      const raf = (time) => {
+        lenis?.raf(time)
+        rafId = requestAnimationFrame(raf)
+      }
+      rafId = requestAnimationFrame(raf)
+    }
+
+    setup()
+    mqReduce.addEventListener('change', setup)
+    mqDesktop.addEventListener('change', setup)
+    return () => {
+      mqReduce.removeEventListener('change', setup)
+      mqDesktop.removeEventListener('change', setup)
+      teardown()
+    }
+  }, [])
+}
+
 function useReveal() {
   useEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (reduce) {
+    if (prefersReducedMotion()) {
       document.querySelectorAll('[data-reveal]').forEach((el) => el.classList.add('is-revealed'))
       return undefined
     }
@@ -54,10 +108,70 @@ function useReveal() {
   }, [])
 }
 
+function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist' }) {
+  const listRef = useRef(null)
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false })
+
+  const updateIndicator = () => {
+    const list = listRef.current
+    if (!list) return
+    const active = list.querySelector('.tab.is-active')
+    if (!active) return
+    setIndicator({
+      left: active.offsetLeft,
+      width: active.offsetWidth,
+      ready: true,
+    })
+  }
+
+  useLayoutEffect(() => {
+    updateIndicator()
+  }, [activeId, items])
+
+  useEffect(() => {
+    const list = listRef.current
+    if (!list) return undefined
+    const onResize = () => updateIndicator()
+    window.addEventListener('resize', onResize)
+    list.addEventListener('scroll', onResize, { passive: true })
+    return () => {
+      window.removeEventListener('resize', onResize)
+      list.removeEventListener('scroll', onResize)
+    }
+  }, [activeId, items])
+
+  return (
+    <div className="tabs" role={role} aria-label={ariaLabel} ref={listRef}>
+      <span
+        className={`tabs-indicator${indicator.ready ? ' is-ready' : ''}`}
+        style={{
+          width: indicator.width,
+          transform: `translateX(${indicator.left}px)`,
+        }}
+        aria-hidden="true"
+      />
+      {items.map((t) => (
+        <button
+          key={t.id}
+          type="button"
+          role={role === 'tablist' ? 'tab' : undefined}
+          aria-selected={t.id === activeId}
+          className={`tab${t.id === activeId ? ' is-active' : ''}`}
+          onClick={() => onChange(t.id)}
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 function Header({ menuOpen, setMenuOpen }) {
   const scrolled = useScrolled()
+  const solid = scrolled || menuOpen
+
   return (
-    <header className={`site-header${scrolled ? ' is-scrolled' : ''}`}>
+    <header className={`site-header${solid ? ' is-scrolled' : ''}`}>
       <div className="container header-inner">
         <a className="brand" href="#top" aria-label="УНО — на главную">
           <img src={asset('images/logo-uno.webp')} alt="УНО" width="148" height="40" />
@@ -111,31 +225,43 @@ function Header({ menuOpen, setMenuOpen }) {
 
 function Hero() {
   const videoRef = useRef(null)
+  const [ready, setReady] = useState(false)
+  const [videoLoaded, setVideoLoaded] = useState(false)
 
   useEffect(() => {
+    const reduce = prefersReducedMotion()
+    const id = requestAnimationFrame(() => setReady(true))
     const el = videoRef.current
-    if (!el) return undefined
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (!el) return () => cancelAnimationFrame(id)
+
+    const onLoaded = () => {
+      setVideoLoaded(true)
+      if (!reduce) el.play().catch(() => {})
+    }
+
     if (reduce) {
       el.removeAttribute('autoplay')
       el.pause()
-      return undefined
+      setVideoLoaded(true)
+      return () => cancelAnimationFrame(id)
     }
+
     el.muted = true
-    const play = () => {
-      el.play().catch(() => {})
+    if (el.readyState >= 2) onLoaded()
+    el.addEventListener('loadeddata', onLoaded)
+    el.play().catch(() => {})
+    return () => {
+      cancelAnimationFrame(id)
+      el.removeEventListener('loadeddata', onLoaded)
     }
-    play()
-    el.addEventListener('loadeddata', play)
-    return () => el.removeEventListener('loadeddata', play)
   }, [])
 
   return (
-    <section className="hero" id="top">
+    <section className={`hero${ready ? ' is-ready' : ''}`} id="top">
       <div className="hero-media" aria-hidden="true">
         <video
           ref={videoRef}
-          className="hero-video"
+          className={`hero-video${videoLoaded ? ' is-loaded' : ''}`}
           src={asset(heroClip.src)}
           poster={asset(heroClip.poster)}
           muted
@@ -145,24 +271,33 @@ function Hero() {
           preload="auto"
         />
         <div className="hero-veil" />
+        <div className="hero-depth" />
       </div>
       <div className="container hero-stage">
         <div className="hero-content">
-          <p className="hero-loc">Салон красоты · Саратов · {salon.addressShort}</p>
+          <p className="hero-loc hero-enter" data-hero-step="0">
+            Саратов · {salon.addressShort}
+          </p>
           <h1>
-            <span className="h1-brand">УНО</span>
-            <span className="h1-sub">{salon.slogan}</span>
+            <span className="h1-brand hero-enter" data-hero-step="1">
+              УНО
+            </span>
+            <span className="h1-sub hero-enter" data-hero-step="2">
+              {salon.slogan}
+            </span>
           </h1>
-          <p className="lead">{salon.tagline} — полный цикл услуг в одном салоне.</p>
-          <div className="hero-cta">
+          <p className="lead hero-enter" data-hero-step="3">
+            Полный цикл услуг в одном салоне.
+          </p>
+          <div className="hero-cta hero-enter" data-hero-step="4">
             <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
               Записаться во VK
             </a>
-            <a className="btn btn-secondary btn-lg btn-on-dark" href="#services">
+            <a className="text-link text-link-on-dark" href="#services">
               Услуги и цены
             </a>
           </div>
-          <p className="hero-meta">
+          <p className="hero-meta hero-enter" data-hero-step="5">
             {salon.hours}
             <span className="hero-meta-sep" aria-hidden="true">
               ·
@@ -184,13 +319,18 @@ function BookingSteps() {
   return (
     <section className="section section-tight" id="booking" data-reveal>
       <div className="container">
-        <div className="section-head section-head-compact">
+        <div className="section-head section-head-compact" data-delay style={{ '--reveal-delay': '0ms' }}>
           <p className="section-kicker">Запись</p>
           <h2>Три шага до визита</h2>
         </div>
         <ol className="steps">
-          {steps.map((s) => (
-            <li key={s.n} className="step">
+          {steps.map((s, i) => (
+            <li
+              key={s.n}
+              className="step"
+              data-delay
+              style={{ '--reveal-delay': `${80 + i * 90}ms` }}
+            >
               <span className="step-n">{s.n}</span>
               <div>
                 <h3 className="step-t">{s.t}</h3>
@@ -199,7 +339,7 @@ function BookingSteps() {
             </li>
           ))}
         </ol>
-        <div className="section-cta">
+        <div className="section-cta" data-delay style={{ '--reveal-delay': '360ms' }}>
           <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
             Написать во VK
           </a>
@@ -211,7 +351,7 @@ function BookingSteps() {
 
 function QuoteBand() {
   return (
-    <section className="quote-band" data-reveal aria-label="Слоган салона">
+    <section className="quote-band quote-band--pull" data-reveal aria-label="Слоган салона">
       <div className="container">
         <p className="quote-text">{salon.slogan}</p>
         <p className="quote-sub">{salon.tagline}</p>
@@ -240,7 +380,7 @@ function Services({ tabId, setTabId }) {
   return (
     <section className="section" id="services" data-reveal>
       <div className="container">
-        <div className="section-head section-head-compact">
+        <div className="section-head section-head-compact" data-delay style={{ '--reveal-delay': '0ms' }}>
           <p className="section-kicker">Прайс</p>
           <h2>Услуги и цены</h2>
           <p>
@@ -249,22 +389,20 @@ function Services({ tabId, setTabId }) {
           </p>
         </div>
 
-        <div className="tabs" role="tablist" aria-label="Категории услуг">
-          {serviceTabs.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              aria-selected={t.id === tabId}
-              className={`tab${t.id === tabId ? ' is-active' : ''}`}
-              onClick={() => setTabId(t.id)}
-            >
-              {t.label}
-            </button>
-          ))}
+        <div data-delay style={{ '--reveal-delay': '90ms' }}>
+          <SlidingTabs
+            items={serviceTabs}
+            activeId={tabId}
+            onChange={setTabId}
+            ariaLabel="Категории услуг"
+          />
         </div>
 
-        <div className={`price-panel price-panel--${tab.id}`}>
+        <div
+          className={`price-panel price-panel--${tab.id}`}
+          data-delay
+          style={{ '--reveal-delay': '160ms' }}
+        >
           <div className="price-panel-head">
             <span className="price-panel-mark" aria-hidden="true" />
             <div>
@@ -290,28 +428,30 @@ function Services({ tabId, setTabId }) {
                       <span className="price-acc-chevron" aria-hidden="true" />
                     </span>
                   </button>
-                  {open ? (
-                    <ul className="price-rows">
-                      {group.items.map((item) => (
-                        <li key={item.name}>
-                          <span className="price-name">{item.name}</span>
-                          <span className="price-dots" aria-hidden="true" />
-                          <span className="price-value">{item.price}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
+                  <div className="price-acc-body">
+                    <div className="price-acc-body-inner">
+                      <ul className="price-rows">
+                        {group.items.map((item) => (
+                          <li key={item.name}>
+                            <span className="price-name">{item.name}</span>
+                            <span className="price-dots" aria-hidden="true" />
+                            <span className="price-value">{item.price}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               )
             })}
           </div>
         </div>
 
-        <div className="section-cta">
+        <div className="section-cta" data-delay style={{ '--reveal-delay': '240ms' }}>
           <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel="noreferrer">
             Записаться во VK
           </a>
-          <a className="btn btn-secondary" href={BOOK_PHONE}>
+          <a className="text-link" href={BOOK_PHONE}>
             Позвонить
           </a>
         </div>
@@ -321,10 +461,45 @@ function Services({ tabId, setTabId }) {
 }
 
 function About() {
+  const figureRef = useRef(null)
+
+  useEffect(() => {
+    const figure = figureRef.current
+    if (!figure || prefersReducedMotion()) return undefined
+
+    const img = figure.querySelector('img')
+    if (!img) return undefined
+
+    let ticking = false
+    const update = () => {
+      ticking = false
+      const rect = figure.getBoundingClientRect()
+      const viewH = window.innerHeight
+      const progress = (viewH - rect.top) / (viewH + rect.height)
+      const clamped = Math.min(1, Math.max(0, progress))
+      const offset = (clamped - 0.5) * 6
+      img.style.transform = `translate3d(0, ${offset}%, 0) scale(1.08)`
+    }
+
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(update)
+    }
+
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [])
+
   return (
     <section className="section section-alt" id="about" data-reveal>
       <div className="container about-layout">
-        <figure className="about-photo">
+        <figure className="about-photo" ref={figureRef} data-delay style={{ '--reveal-delay': '0ms' }}>
           <img
             src={asset('images/work-11.webp')}
             alt="Французский маникюр с красным акцентом — работа салона УНО"
@@ -333,7 +508,7 @@ function About() {
             loading="lazy"
           />
         </figure>
-        <div className="about-copy">
+        <div className="about-copy" data-delay style={{ '--reveal-delay': '120ms' }}>
           <p className="about-eyebrow">О салоне</p>
           <h2>Полный цикл на Менякина, 4</h2>
           <p className="lead-sm">
@@ -353,7 +528,7 @@ function About() {
             <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel="noreferrer">
               Записаться во VK
             </a>
-            <a className="btn btn-ghost" href={BOOK_PHONE}>
+            <a className="text-link" href={BOOK_PHONE}>
               {salon.phones[0].display}
             </a>
           </div>
@@ -363,103 +538,42 @@ function About() {
   )
 }
 
-function Lightbox({ items, index, onClose, onPrev, onNext }) {
-  const dialogRef = useRef(null)
-  const item = items[index]
-
-  useEffect(() => {
-    if (index == null || !item) return undefined
-    const prevOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    const onKey = (e) => {
-      if (e.key === 'Escape') onClose()
-      if (e.key === 'ArrowLeft') onPrev()
-      if (e.key === 'ArrowRight') onNext()
-    }
-    window.addEventListener('keydown', onKey)
-    dialogRef.current?.focus()
-    return () => {
-      document.body.style.overflow = prevOverflow
-      window.removeEventListener('keydown', onKey)
-    }
-  }, [index, item, onClose, onPrev, onNext])
-
-  if (index == null || !item) return null
-
-  return (
-    <div
-      className="lightbox"
-      role="dialog"
-      aria-modal="true"
-      aria-label={item.alt}
-      ref={dialogRef}
-      tabIndex={-1}
-      onClick={onClose}
-    >
-      <button type="button" className="lightbox-close" aria-label="Закрыть" onClick={onClose}>
-        ×
-      </button>
-      <button
-        type="button"
-        className="lightbox-nav lightbox-prev"
-        aria-label="Предыдущее фото"
-        onClick={(e) => {
-          e.stopPropagation()
-          onPrev()
-        }}
-      >
-        ‹
-      </button>
-      <figure
-        className="lightbox-figure"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <img src={asset(item.src)} alt={item.alt} />
-        <figcaption>{item.alt}</figcaption>
-      </figure>
-      <button
-        type="button"
-        className="lightbox-nav lightbox-next"
-        aria-label="Следующее фото"
-        onClick={(e) => {
-          e.stopPropagation()
-          onNext()
-        }}
-      >
-        ›
-      </button>
-    </div>
-  )
-}
-
 function Gallery() {
   const [filter, setFilter] = useState('all')
-  const [lightboxIndex, setLightboxIndex] = useState(null)
+  const [lightboxIndex, setLightboxIndex] = useState(-1)
   const items = useMemo(
     () => (filter === 'all' ? galleryItems : galleryItems.filter((g) => g.cat === filter)),
     [filter],
   )
+  const slides = useMemo(
+    () =>
+      items.map((item) => ({
+        src: asset(item.src),
+        alt: item.alt,
+        title: item.alt,
+      })),
+    [items],
+  )
+
+  useEffect(() => {
+    setLightboxIndex(-1)
+  }, [filter])
 
   return (
     <section className="section" id="gallery" data-reveal>
       <div className="container">
-        <div className="section-head">
+        <div className="section-head" data-delay style={{ '--reveal-delay': '0ms' }}>
           <p className="section-kicker">Портфолио</p>
           <h2>Работы</h2>
           <p>Результаты мастеров — без скринов прайса и случайных кадров «в процессе».</p>
         </div>
-        <div className="tabs" role="tablist" aria-label="Фильтр галереи">
-          {galleryFilters.map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              className={`tab${filter === f.id ? ' is-active' : ''}`}
-              aria-selected={filter === f.id}
-              onClick={() => setFilter(f.id)}
-            >
-              {f.label}
-            </button>
-          ))}
+        <div data-delay style={{ '--reveal-delay': '80ms' }}>
+          <SlidingTabs
+            items={galleryFilters}
+            activeId={filter}
+            onChange={setFilter}
+            ariaLabel="Фильтр галереи"
+          />
         </div>
         <div className="gallery-grid">
           {items.map((item, i) => (
@@ -467,22 +581,26 @@ function Gallery() {
               key={item.src}
               type="button"
               className="gallery-item"
+              data-delay
+              style={{ '--reveal-delay': `${120 + (i % 8) * 45}ms` }}
               onClick={() => setLightboxIndex(i)}
               aria-label={`Открыть: ${item.alt}`}
             >
-              <img src={asset(item.src)} alt={item.alt} loading="lazy" width="600" height="800" />
+              <span className="gallery-item-media">
+                <img src={asset(item.src)} alt={item.alt} loading="lazy" width="600" height="800" />
+              </span>
+              <span className="gallery-caption">{item.alt}</span>
             </button>
           ))}
         </div>
       </div>
       <Lightbox
-        items={items}
-        index={lightboxIndex}
-        onClose={() => setLightboxIndex(null)}
-        onPrev={() =>
-          setLightboxIndex((i) => (i == null ? i : (i - 1 + items.length) % items.length))
-        }
-        onNext={() => setLightboxIndex((i) => (i == null ? i : (i + 1) % items.length))}
+        open={lightboxIndex >= 0}
+        close={() => setLightboxIndex(-1)}
+        index={lightboxIndex < 0 ? 0 : lightboxIndex}
+        slides={slides}
+        controller={{ closeOnBackdropClick: true }}
+        styles={{ container: { backgroundColor: 'rgba(14, 12, 11, 0.94)' } }}
       />
     </section>
   )
@@ -492,7 +610,7 @@ function Contacts() {
   return (
     <section className="section section-alt" id="contacts" data-reveal>
       <div className="container contacts-grid">
-        <div className="contacts-copy">
+        <div className="contacts-copy" data-delay style={{ '--reveal-delay': '0ms' }}>
           <p className="section-kicker">Связь</p>
           <h2>Контакты и запись</h2>
           <p className="lead-sm">
@@ -541,12 +659,12 @@ function Contacts() {
             <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
               Записаться во VK
             </a>
-            <a className="btn btn-secondary btn-lg" href={BOOK_PHONE}>
+            <a className="text-link" href={BOOK_PHONE}>
               Позвонить
             </a>
           </div>
         </div>
-        <div className="map-wrap">
+        <div className="map-wrap" data-delay style={{ '--reveal-delay': '120ms' }}>
           <iframe
             title="Карта: салон УНО на Менякина, 4"
             src={salon.mapEmbed}
@@ -600,11 +718,11 @@ function Footer() {
 function StickyCta() {
   return (
     <div className="sticky-cta" role="region" aria-label="Быстрая запись">
-      <a className="btn btn-secondary" href={BOOK_PHONE}>
+      <a className="sticky-cta-secondary" href={BOOK_PHONE}>
         Позвонить
       </a>
       <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel="noreferrer">
-        Записаться
+        Записаться во VK
       </a>
     </div>
   )
@@ -614,6 +732,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [serviceTabId, setServiceTabId] = useState(serviceTabs[0].id)
   useReveal()
+  useLenis()
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
