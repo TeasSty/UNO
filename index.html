@@ -9,13 +9,18 @@
     <script>
       ;(function () {
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+        function hasAnchor() {
+          var h = location.hash
+          return h.length > 1 && h !== '#top'
+        }
         function toTop() {
-          if (location.hash) return
+          if (hasAnchor()) return
           window.scrollTo(0, 0)
           document.documentElement.scrollTop = 0
           if (document.body) document.body.scrollTop = 0
         }
         toTop()
+        window.addEventListener('beforeunload', toTop)
         window.addEventListener('pageshow', toTop)
         window.addEventListener('load', toTop)
       })()

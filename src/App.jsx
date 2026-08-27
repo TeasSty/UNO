@@ -6,6 +6,7 @@ import {
   hasScrollHash,
   resetPageScrollUnlessHash,
   scrollToHashIfPresent,
+  syncLenisToTop,
 } from './scrollReset.js'
 import {
   aboutFacts,
@@ -82,7 +83,7 @@ function useScrolled(threshold = 24) {
   return scrolled
 }
 
-/** Show sticky CTA only after the hero has scrolled out of view. */
+/** Show sticky CTA only well after the hero has left the viewport. */
 function usePastHero() {
   const [pastHero, setPastHero] = useState(false)
   useEffect(() => {
@@ -91,7 +92,7 @@ function usePastHero() {
 
     const check = () => {
       const { bottom } = hero.getBoundingClientRect()
-      setPastHero(bottom <= 0)
+      setPastHero(bottom <= -120)
     }
 
     check()
@@ -107,10 +108,8 @@ function usePastHero() {
 
 /** Lenis on desktop only; destroyed when reduced-motion is on. */
 function useLenis() {
-  const initialScrollResetRef = useRef(false)
-
   useLayoutEffect(() => {
-    if (hasScrollHash() || initialScrollResetRef.current) return
+    if (hasScrollHash()) return
     resetPageScrollUnlessHash()
   }, [])
 
@@ -119,10 +118,12 @@ function useLenis() {
     const mqDesktop = window.matchMedia('(min-width: 960px)')
     let lenis = null
     let rafId = 0
+    let syncFrames = 0
 
     const teardown = () => {
       if (rafId) cancelAnimationFrame(rafId)
       rafId = 0
+      syncFrames = 0
       if (lenis) {
         lenis.destroy()
         lenis = null
@@ -134,21 +135,22 @@ function useLenis() {
       teardown()
       if (mqReduce.matches || !mqDesktop.matches) return
 
+      if (!hasScrollHash()) resetPageScrollUnlessHash()
+
       lenis = new Lenis({
         duration: 1.05,
         smoothWheel: true,
         touchMultiplier: 1.4,
       })
       document.documentElement.classList.add('lenis-active')
-
-      if (!hasScrollHash() && !initialScrollResetRef.current) {
-        resetPageScrollUnlessHash()
-        lenis.scrollTo(0, { immediate: true, force: true })
-        initialScrollResetRef.current = true
-      }
+      syncLenisToTop(lenis)
 
       const raf = (time) => {
         lenis?.raf(time)
+        if (!hasScrollHash() && syncFrames < 12) {
+          syncLenisToTop(lenis)
+          syncFrames += 1
+        }
         rafId = requestAnimationFrame(raf)
       }
       rafId = requestAnimationFrame(raf)
@@ -382,6 +384,14 @@ function Hero() {
   return (
     <section className={`hero${ready ? ' is-ready' : ''}`} id="top">
       <div className="hero-media" aria-hidden="true">
+        <img
+          className="hero-poster-fallback"
+          src={asset(heroClip.poster)}
+          alt=""
+          width="1920"
+          height="1080"
+          decoding="async"
+        />
         <video
           ref={videoRef}
           className={`hero-video${videoLoaded ? ' is-loaded' : ''}`}
@@ -395,6 +405,7 @@ function Hero() {
         />
         <div className="hero-veil" />
         <div className="hero-depth" />
+        <div className="hero-grain" />
       </div>
       <div className="container hero-stage">
         <div className="hero-content">
@@ -414,7 +425,7 @@ function Hero() {
           </p>
           <div className="hero-cta hero-enter" data-hero-step="4">
             <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
-              Записаться в VK
+              Записаться
             </a>
             <a className="text-link text-link-on-dark" href="#services">
               Услуги и цены
@@ -851,7 +862,7 @@ function StickyCta({ visible }) {
         Позвонить
       </a>
       <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel="noreferrer">
-        Записаться в VK
+        Записаться
       </a>
     </div>
   )

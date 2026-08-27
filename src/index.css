@@ -7,11 +7,12 @@
   --ink-soft: #3a3532;
   --muted: #6d6661;
   --line: #ddd8d3;
-  --brand: #c42027;
-  --brand-ink: #9a181e;
+  --brand: #b81c22;
+  --brand-ink: #8f161b;
   --sage: #5c6b58;
   --radius: 10px;
-  --radius-btn: 10px;
+  --radius-btn: 2px;
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
   --shadow: 0 10px 32px rgba(20, 18, 16, 0.07);
   --font: 'Manrope', system-ui, sans-serif;
   --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
@@ -45,6 +46,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   padding-bottom: calc(var(--sticky-h) + 12px);
+  overflow-anchor: none;
 }
 
 /* Skip link + keyboard focus */
@@ -261,7 +263,9 @@ button {
 [data-reveal] {
   opacity: 0;
   transform: translateY(18px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition:
+    opacity 0.7s var(--ease-premium),
+    transform 0.7s var(--ease-premium);
 }
 
 [data-reveal].is-revealed {
@@ -273,8 +277,8 @@ button {
   opacity: 0;
   transform: translateY(14px);
   transition:
-    opacity 0.65s ease,
-    transform 0.65s ease;
+    opacity 0.65s var(--ease-premium),
+    transform 0.65s var(--ease-premium);
   transition-delay: 0ms;
 }
 
@@ -530,16 +534,38 @@ button {
 
 .hero-video.is-loaded {
   opacity: 1;
-  animation: hero-depth-scale 22s ease-in-out infinite alternate;
+  animation: none;
+  transform: scale(1.05);
 }
 
-@keyframes hero-depth-scale {
+.hero-poster-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  display: none;
+  transform: scale(1.04);
+  animation: hero-poster-kenburns 24s var(--ease-premium) infinite alternate;
+}
+
+@keyframes hero-poster-kenburns {
   from {
-    transform: scale(1.02);
+    transform: scale(1.04);
   }
   to {
-    transform: scale(1.08);
+    transform: scale(1.1);
   }
+}
+
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
 }
 
 .hero-veil {
@@ -548,11 +574,17 @@ button {
   background:
     linear-gradient(
       180deg,
-      rgba(20, 18, 16, 0.38) 0%,
-      rgba(20, 18, 16, 0.12) 42%,
-      rgba(20, 18, 16, 0.88) 100%
+      rgba(20, 18, 16, 0.42) 0%,
+      rgba(20, 18, 16, 0.14) 40%,
+      rgba(20, 18, 16, 0.9) 100%
     ),
-    linear-gradient(100deg, rgba(20, 18, 16, 0.62) 0%, rgba(20, 18, 16, 0.2) 55%, transparent 82%);
+    linear-gradient(
+      105deg,
+      rgba(20, 18, 16, 0.82) 0%,
+      rgba(20, 18, 16, 0.55) 28%,
+      rgba(20, 18, 16, 0.18) 52%,
+      transparent 78%
+    );
   pointer-events: none;
 }
 
@@ -616,6 +648,7 @@ button {
 .h1-sub {
   display: block;
   margin-top: 0.65rem;
+  font-family: var(--font-display);
   font-size: clamp(1.05rem, 2.5vw, 1.35rem);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.92);
@@ -659,8 +692,8 @@ button {
   opacity: 0;
   transform: translateY(18px);
   transition:
-    opacity 0.7s ease,
-    transform 0.7s ease;
+    opacity 0.7s var(--ease-premium),
+    transform 0.7s var(--ease-premium);
   transition-delay: 0ms;
 }
 
@@ -918,7 +951,7 @@ button {
 }
 
 .price-panel--nails {
-  --cat: #c42027;
+  --cat: #b81c22;
 }
 .price-panel--face {
   --cat: #7a5c5c;
@@ -1050,6 +1083,25 @@ button {
   padding: 0.5rem 0.1rem;
   border-top: 1px dotted var(--line);
   font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 720px) {
+  .price-rows li {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding: 0.55rem 0.1rem;
+    border-top: 0;
+    border-bottom: 1px solid #ebe8e4;
+  }
+
+  .price-rows li:last-child {
+    border-bottom: 0;
+  }
+
+  .price-dots {
+    display: none;
+  }
 }
 
 .price-name {
@@ -1379,7 +1431,7 @@ button {
 
 .sticky-cta.is-visible {
   transform: translateY(0);
-  opacity: 1;
+  opacity: 0.96;
   pointer-events: auto;
 }
 
@@ -1417,6 +1469,14 @@ button {
 }
 
 @media (max-width: 719px) {
+  .hero-video {
+    display: none;
+  }
+
+  .hero-poster-fallback {
+    display: block;
+  }
+
   .tab {
     min-height: 48px;
     padding: 0.65rem 1rem 0.75rem;
@@ -1651,9 +1711,11 @@ button {
   }
 
   .hero-video,
-  .hero-video.is-loaded {
+  .hero-video.is-loaded,
+  .hero-poster-fallback {
     opacity: 1;
     transform: none;
+    animation: none;
   }
 
   .hero-depth {
