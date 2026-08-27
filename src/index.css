@@ -825,8 +825,8 @@ button {
   position: sticky;
   top: calc(var(--header-h) - 1px);
   z-index: 12;
-  margin: 0 calc(-1 * (100vw - min(1120px, calc(100% - 2rem))) / 2 - 1rem);
-  padding: 0.35rem 1rem 0;
+  margin: 0;
+  padding: 0.35rem 0 0;
   background: linear-gradient(var(--bg) 78%, transparent);
 }
 
@@ -843,8 +843,10 @@ button {
 }
 
 .tabs--price {
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: 0.5rem;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 1rem;
+  padding-inline: 1rem;
+  margin-inline: -1rem;
 }
 
 .tabs--price .tab {
@@ -1450,9 +1452,10 @@ button {
     width: min(1120px, calc(100% - 1.25rem));
   }
 
-  .services-tabs-sticky {
-    margin-inline: -0.625rem;
+  .tabs--price {
+    scroll-padding-inline: 0.625rem;
     padding-inline: 0.625rem;
+    margin-inline: -0.625rem;
   }
 
   .tab {

@@ -46,7 +46,13 @@ function useInitialScroll() {
       return
     }
 
-    window.scrollTo(0, 0)
+    const reset = () => {
+      window.scrollTo(0, 0)
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+    }
+    reset()
+    requestAnimationFrame(reset)
   }, [])
 }
 
@@ -113,6 +119,11 @@ function useLenis() {
       })
       document.documentElement.classList.add('lenis-active')
 
+      if (!window.location.hash) {
+        lenis.scrollTo(0, { immediate: true, force: true })
+        window.scrollTo(0, 0)
+      }
+
       const raf = (time) => {
         lenis?.raf(time)
         rafId = requestAnimationFrame(raf)
@@ -165,7 +176,7 @@ function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist', c
     const active = list.querySelector('.tab.is-active')
     if (!active) return
     setIndicator({
-      left: active.offsetLeft,
+      left: active.offsetLeft - list.scrollLeft,
       width: active.offsetWidth,
       ready: true,
     })
@@ -176,12 +187,16 @@ function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist', c
   }, [activeId, items])
 
   useEffect(() => {
-    if (skipTabScrollRef.current) {
-      skipTabScrollRef.current = false
-      return undefined
-    }
     const list = listRef.current
     if (!list) return undefined
+
+    if (skipTabScrollRef.current) {
+      skipTabScrollRef.current = false
+      list.scrollLeft = 0
+      updateIndicator()
+      return undefined
+    }
+
     const active = list.querySelector('.tab.is-active')
     active?.scrollIntoView({
       inline: 'nearest',
@@ -308,7 +323,7 @@ function Header({ menuOpen, setMenuOpen }) {
             ))}
           </div>
           <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel="noreferrer">
-            Записаться во VK
+            Записаться в VK
           </a>
           <a className="btn btn-secondary" href={BOOK_TG} target="_blank" rel="noreferrer">
             Telegram
@@ -387,7 +402,7 @@ function Hero() {
           </p>
           <div className="hero-cta hero-enter" data-hero-step="4">
             <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
-              Записаться во VK
+              Записаться в VK
             </a>
             <a className="text-link text-link-on-dark" href="#services">
               Услуги и цены
@@ -408,7 +423,7 @@ function Hero() {
 
 function BookingSteps() {
   const steps = [
-    { n: '01', t: 'Напишите во VK', d: 'Укажите услугу и удобное время.' },
+    { n: '01', t: 'Напишите в VK', d: 'Укажите услугу и удобное время.' },
     { n: '02', t: 'Подберём мастера', d: 'Администратор подтвердит запись.' },
     { n: '03', t: 'Приходите в салон', d: `${salon.addressShort}, ежедневно до 20:00.` },
   ]
@@ -438,7 +453,7 @@ function BookingSteps() {
         <p className="booking-note" data-delay style={{ '--reveal-delay': '360ms' }}>
           Готовы записаться?{' '}
           <a href={BOOK_VK} target="_blank" rel="noreferrer">
-            Напишите во VK
+            Напишите в VK
           </a>{' '}
           или{' '}
           <a href={BOOK_PHONE}>позвоните администратору</a>.
@@ -711,7 +726,7 @@ function Contacts() {
           <p className="section-kicker">Связь</p>
           <h2>Контакты и запись</h2>
           <p className="lead-sm">
-            Напишите во VK — основной канал записи. Можно позвонить или написать в Telegram.
+            Напишите в VK — основной канал записи. Можно позвонить или написать в Telegram.
           </p>
           <dl className="contact-list">
             <div>
@@ -754,7 +769,7 @@ function Contacts() {
           </dl>
           <div className="section-cta">
             <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
-              Записаться во VK
+              Записаться в VK
             </a>
             <a className="text-link" href={BOOK_PHONE}>
               Позвонить
@@ -824,7 +839,7 @@ function StickyCta({ visible }) {
         Позвонить
       </a>
       <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel="noreferrer">
-        Записаться во VK
+        Записаться в VK
       </a>
     </div>
   )
