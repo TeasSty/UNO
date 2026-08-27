@@ -27,6 +27,29 @@ function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
+/** Full reload starts at top; explicit hash anchors still work. */
+function useInitialScroll() {
+  useLayoutEffect(() => {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual'
+    }
+
+    const hash = window.location.hash
+    if (hash.length > 1) {
+      const target = document.getElementById(decodeURIComponent(hash.slice(1)))
+      if (target) {
+        target.scrollIntoView({
+          block: 'start',
+          behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+        })
+      }
+      return
+    }
+
+    window.scrollTo(0, 0)
+  }, [])
+}
+
 function useScrolled(threshold = 24) {
   const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
@@ -133,6 +156,7 @@ function useReveal() {
 
 function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist', className = '' }) {
   const listRef = useRef(null)
+  const skipTabScrollRef = useRef(true)
   const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false })
 
   const updateIndicator = () => {
@@ -152,10 +176,18 @@ function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist', c
   }, [activeId, items])
 
   useEffect(() => {
+    if (skipTabScrollRef.current) {
+      skipTabScrollRef.current = false
+      return undefined
+    }
     const list = listRef.current
     if (!list) return undefined
     const active = list.querySelector('.tab.is-active')
-    active?.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' })
+    active?.scrollIntoView({
+      inline: 'nearest',
+      block: 'nearest',
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    })
   }, [activeId])
 
   useEffect(() => {
@@ -802,6 +834,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [serviceTabId, setServiceTabId] = useState(serviceTabs[0].id)
   const pastHero = usePastHero()
+  useInitialScroll()
   useReveal()
   useLenis()
 
