@@ -38,6 +38,29 @@ function useScrolled(threshold = 24) {
   return scrolled
 }
 
+/** Show sticky CTA only after the hero has scrolled out of view. */
+function usePastHero() {
+  const [pastHero, setPastHero] = useState(false)
+  useEffect(() => {
+    const hero = document.querySelector('.hero')
+    if (!hero) return undefined
+
+    const check = () => {
+      const { bottom } = hero.getBoundingClientRect()
+      setPastHero(bottom <= 0)
+    }
+
+    check()
+    window.addEventListener('scroll', check, { passive: true })
+    window.addEventListener('resize', check)
+    return () => {
+      window.removeEventListener('scroll', check)
+      window.removeEventListener('resize', check)
+    }
+  }, [])
+  return pastHero
+}
+
 /** Lenis on desktop only; destroyed when reduced-motion is on. */
 function useLenis() {
   useEffect(() => {
@@ -108,7 +131,7 @@ function useReveal() {
   }, [])
 }
 
-function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist' }) {
+function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist', className = '' }) {
   const listRef = useRef(null)
   const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false })
 
@@ -131,6 +154,13 @@ function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist' })
   useEffect(() => {
     const list = listRef.current
     if (!list) return undefined
+    const active = list.querySelector('.tab.is-active')
+    active?.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' })
+  }, [activeId])
+
+  useEffect(() => {
+    const list = listRef.current
+    if (!list) return undefined
     const onResize = () => updateIndicator()
     window.addEventListener('resize', onResize)
     list.addEventListener('scroll', onResize, { passive: true })
@@ -141,7 +171,12 @@ function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist' })
   }, [activeId, items])
 
   return (
-    <div className="tabs" role={role} aria-label={ariaLabel} ref={listRef}>
+    <div
+      className={`tabs${className ? ` ${className}` : ''}`}
+      role={role}
+      aria-label={ariaLabel}
+      ref={listRef}
+    >
       <span
         className={`tabs-indicator${indicator.ready ? ' is-ready' : ''}`}
         style={{
@@ -184,11 +219,33 @@ function Header({ menuOpen, setMenuOpen }) {
           ))}
         </nav>
         <div className="header-actions">
-          <a className="btn btn-ghost phone-link" href={BOOK_PHONE}>
-            {salon.phones[0].display}
-          </a>
-          <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel="noreferrer">
+          <div className="header-phones" aria-label="Телефоны салона">
+            {salon.phones.map((phone) => (
+              <a
+                key={phone.href}
+                className="btn btn-ghost phone-link"
+                href={phone.href}
+                title={phone.display}
+              >
+                <span className="phone-link-full">{phone.display}</span>
+                <span className="phone-link-short">{phone.short ?? phone.display}</span>
+              </a>
+            ))}
+          </div>
+          <a className="btn btn-primary header-book" href={BOOK_VK} target="_blank" rel="noreferrer">
             Записаться
+          </a>
+          <a
+            className="header-phone-mobile"
+            href={BOOK_PHONE}
+            aria-label={`Позвонить: ${salon.phones[0].display}`}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M6.6 10.8a15.9 15.9 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"
+                fill="currentColor"
+              />
+            </svg>
           </a>
           <button
             type="button"
@@ -211,6 +268,13 @@ function Header({ menuOpen, setMenuOpen }) {
               {item.label}
             </a>
           ))}
+          <div className="mobile-menu-phones">
+            {salon.phones.map((phone) => (
+              <a key={phone.href} className="mobile-menu-phone" href={phone.href}>
+                {phone.display}
+              </a>
+            ))}
+          </div>
           <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel="noreferrer">
             Записаться во VK
           </a>
@@ -268,7 +332,7 @@ function Hero() {
           loop
           playsInline
           autoPlay
-          preload="auto"
+          preload="metadata"
         />
         <div className="hero-veil" />
         <div className="hero-depth" />
@@ -339,11 +403,14 @@ function BookingSteps() {
             </li>
           ))}
         </ol>
-        <div className="section-cta" data-delay style={{ '--reveal-delay': '360ms' }}>
-          <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
-            Написать во VK
-          </a>
-        </div>
+        <p className="booking-note" data-delay style={{ '--reveal-delay': '360ms' }}>
+          Готовы записаться?{' '}
+          <a href={BOOK_VK} target="_blank" rel="noreferrer">
+            Напишите во VK
+          </a>{' '}
+          или{' '}
+          <a href={BOOK_PHONE}>позвоните администратору</a>.
+        </p>
       </div>
     </section>
   )
@@ -389,12 +456,13 @@ function Services({ tabId, setTabId }) {
           </p>
         </div>
 
-        <div data-delay style={{ '--reveal-delay': '90ms' }}>
+        <div className="services-tabs-sticky" data-delay style={{ '--reveal-delay': '90ms' }}>
           <SlidingTabs
             items={serviceTabs}
             activeId={tabId}
             onChange={setTabId}
             ariaLabel="Категории услуг"
+            className="tabs--price"
           />
         </div>
 
@@ -447,14 +515,11 @@ function Services({ tabId, setTabId }) {
           </div>
         </div>
 
-        <div className="section-cta" data-delay style={{ '--reveal-delay': '240ms' }}>
-          <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel="noreferrer">
-            Записаться во VK
-          </a>
-          <a className="text-link" href={BOOK_PHONE}>
-            Позвонить
-          </a>
-        </div>
+        <p className="services-footnote" data-delay style={{ '--reveal-delay': '240ms' }}>
+          Точную стоимость уточняйте при записи —{' '}
+          <a href={BOOK_PHONE}>позвоните</a> или{' '}
+          <a href="#contacts">перейдите в контакты</a>.
+        </p>
       </div>
     </section>
   )
@@ -525,8 +590,8 @@ function About() {
           </ul>
           <p className="promo-line">{salon.promo}</p>
           <div className="about-actions">
-            <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel="noreferrer">
-              Записаться во VK
+            <a className="text-link" href="#contacts">
+              Контакты и запись
             </a>
             <a className="text-link" href={BOOK_PHONE}>
               {salon.phones[0].display}
@@ -715,9 +780,14 @@ function Footer() {
   )
 }
 
-function StickyCta() {
+function StickyCta({ visible }) {
   return (
-    <div className="sticky-cta" role="region" aria-label="Быстрая запись">
+    <div
+      className={`sticky-cta${visible ? ' is-visible' : ''}`}
+      role="region"
+      aria-label="Быстрая запись"
+      aria-hidden={!visible}
+    >
       <a className="sticky-cta-secondary" href={BOOK_PHONE}>
         Позвонить
       </a>
@@ -731,6 +801,7 @@ function StickyCta() {
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [serviceTabId, setServiceTabId] = useState(serviceTabs[0].id)
+  const pastHero = usePastHero()
   useReveal()
   useLenis()
 
@@ -743,8 +814,11 @@ export default function App() {
 
   return (
     <>
+      <a className="skip-link" href="#main">
+        Перейти к содержимому
+      </a>
       <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
-      <main>
+      <main id="main">
         <Hero />
         <BookingSteps />
         <Services tabId={serviceTabId} setTabId={setServiceTabId} />
@@ -754,7 +828,7 @@ export default function App() {
         <Contacts />
       </main>
       <Footer />
-      <StickyCta />
+      <StickyCta visible={pastHero} />
     </>
   )
 }

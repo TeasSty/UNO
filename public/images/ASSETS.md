@@ -5,7 +5,7 @@ VK community: https://vk.com/uno.saratov64 (public id `211216090`)
 
 ## Download
 - Python `urllib` failed on userapi CDN with `SSL: CERTIFICATE_VERIFY_FAILED`.
-- Successful download via `curl.exe` into `public/images/vk/src_*.jpg` (28 files).
+- Successful download via `curl.exe` into `_source/images/vk/src_*.jpg` (28 files).
 
 ## Optimization
 - Portfolio shots converted to WebP (`public/images/work-*.webp`) with Pillow.

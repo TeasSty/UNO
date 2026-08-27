@@ -11,7 +11,7 @@ export const salon = {
   hoursNote: 'По предварительной записи',
   phones: [
     { display: '+7 (8452) 90-04-25', href: 'tel:+78452900425', short: '900-425' },
-    { display: '+7 (908) 557-75-88', href: 'tel:+79085577588' },
+    { display: '+7 (908) 557-75-88', href: 'tel:+79085577588', short: '557-75-88' },
   ],
   /** Primary booking for now — VK community */
   booking: 'https://vk.com/uno.saratov64',
@@ -226,24 +226,25 @@ export const aboutFacts = [
 ]
 
 /** Gallery: finished results only — never price screenshots or process/cape shots. */
+/** Interleaved nails + hair so «Все» feels balanced, not nails-first. */
 export const galleryItems = [
-  { src: 'images/work-00.webp', alt: 'Маникюр — красный гель-лак', cat: 'nails' },
-  { src: 'images/work-02.webp', alt: 'Маникюр с шиммером', cat: 'nails' },
-  { src: 'images/work-03.webp', alt: 'Нюдовый маникюр', cat: 'nails' },
-  { src: 'images/work-04.webp', alt: 'Дизайн ногтей', cat: 'nails' },
-  { src: 'images/work-05.webp', alt: 'Минималистичный маникюр в горошек', cat: 'nails' },
-  { src: 'images/work-06.webp', alt: 'Молочный маникюр', cat: 'nails' },
-  { src: 'images/work-07.webp', alt: 'Светлый маникюр', cat: 'nails' },
-  { src: 'images/work-08.webp', alt: 'Светлый маникюр с хлопьями', cat: 'nails' },
-  { src: 'images/work-11.webp', alt: 'Французский маникюр с красным акцентом', cat: 'nails' },
-  { src: 'images/work-12.webp', alt: 'Тёмный гель-лак', cat: 'nails' },
-  { src: 'images/work-13.webp', alt: 'Бургунди-маникюр', cat: 'nails' },
-  { src: 'images/work-14.webp', alt: 'Нюдовый маникюр на журнале', cat: 'nails' },
-  { src: 'images/work-15.webp', alt: 'Ярко-розовый маникюр', cat: 'nails' },
   { src: 'images/work-16.webp', alt: 'Стрижка — светлый боб', cat: 'hair' },
+  { src: 'images/work-00.webp', alt: 'Маникюр — красный гель-лак', cat: 'nails' },
+  { src: 'images/work-11.webp', alt: 'Французский маникюр с красным акцентом', cat: 'nails' },
   { src: 'images/work-18.webp', alt: 'Голубой френч', cat: 'nails' },
-  { src: 'images/work-19.webp', alt: 'Светлый маникюр с цветами', cat: 'nails' },
+  { src: 'images/work-03.webp', alt: 'Нюдовый маникюр', cat: 'nails' },
   { src: 'images/work-20.webp', alt: 'Классический френч', cat: 'nails' },
+  { src: 'images/work-05.webp', alt: 'Минималистичный маникюр в горошек', cat: 'nails' },
+  { src: 'images/work-13.webp', alt: 'Бургунди-маникюр', cat: 'nails' },
+  { src: 'images/work-02.webp', alt: 'Маникюр с шиммером', cat: 'nails' },
+  { src: 'images/work-19.webp', alt: 'Светлый маникюр с цветами', cat: 'nails' },
+  { src: 'images/work-04.webp', alt: 'Дизайн ногтей', cat: 'nails' },
+  { src: 'images/work-15.webp', alt: 'Ярко-розовый маникюр', cat: 'nails' },
+  { src: 'images/work-06.webp', alt: 'Молочный маникюр', cat: 'nails' },
+  { src: 'images/work-12.webp', alt: 'Тёмный гель-лак', cat: 'nails' },
+  { src: 'images/work-07.webp', alt: 'Светлый маникюр', cat: 'nails' },
+  { src: 'images/work-14.webp', alt: 'Нюдовый маникюр на журнале', cat: 'nails' },
+  { src: 'images/work-08.webp', alt: 'Светлый маникюр с хлопьями', cat: 'nails' },
 ]
 
 /** Local VK clip — full-bleed muted loop behind the hero. */

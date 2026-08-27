@@ -41,6 +41,10 @@ _find_gid.py
 *.sln
 *.sw?
 
+# Raw VK downloads — kept in _source/, never ship in public/
+public/images/vk/
+_source/
+
 _preview/
 _vk_clips*.html
 _vk_videos.html
