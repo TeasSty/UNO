@@ -1,6 +1,4 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import Lenis from 'lenis'
-import Lightbox from 'yet-another-react-lightbox'
 import {
   applyEarlyPageScrollReset,
   hasScrollHash,
@@ -17,8 +15,6 @@ import {
   salon,
   serviceTabs,
 } from './data/content.js'
-import 'lenis/dist/lenis.css'
-import 'yet-another-react-lightbox/styles.css'
 
 const BOOK_VK = salon.booking
 const BOOK_TG = salon.telegram
@@ -119,6 +115,7 @@ function useLenis() {
     let lenis = null
     let rafId = 0
     let syncFrames = 0
+    let cancelled = false
 
     const teardown = () => {
       if (rafId) cancelAnimationFrame(rafId)
@@ -131,11 +128,17 @@ function useLenis() {
       document.documentElement.classList.remove('lenis-active')
     }
 
-    const setup = () => {
+    const setup = async () => {
       teardown()
       if (mqReduce.matches || !mqDesktop.matches) return
 
       if (!hasScrollHash()) resetPageScrollUnlessHash()
+
+      const [{ default: Lenis }] = await Promise.all([
+        import('lenis'),
+        import('lenis/dist/lenis.css'),
+      ])
+      if (cancelled) return
 
       lenis = new Lenis({
         duration: 1.05,
@@ -160,6 +163,7 @@ function useLenis() {
     mqReduce.addEventListener('change', setup)
     mqDesktop.addEventListener('change', setup)
     return () => {
+      cancelled = true
       mqReduce.removeEventListener('change', setup)
       mqDesktop.removeEventListener('change', setup)
       teardown()
@@ -270,7 +274,13 @@ function Header({ menuOpen, setMenuOpen }) {
     <header className={`site-header${solid ? ' is-scrolled' : ''}`}>
       <div className="container header-inner">
         <a className="brand" href="#top" aria-label="УНО — на главную">
-          <img src={asset('images/logo-uno.webp')} alt="УНО" width="148" height="40" />
+          <img
+            src={asset('images/logo-uno.webp')}
+            alt="УНО"
+            width="148"
+            height="40"
+            fetchPriority="high"
+          />
         </a>
         <nav className="nav-desktop" aria-label="Основное меню">
           {nav.map((item) => (
@@ -352,38 +362,58 @@ function Hero() {
   const videoRef = useRef(null)
   const [ready, setReady] = useState(false)
   const [videoLoaded, setVideoLoaded] = useState(false)
+  const [videoSrc, setVideoSrc] = useState(null)
 
   useEffect(() => {
     const reduce = prefersReducedMotion()
+    const mobile = window.matchMedia('(max-width: 719px)')
     const id = requestAnimationFrame(() => setReady(true))
+
+    if (reduce || mobile.matches) {
+      return () => cancelAnimationFrame(id)
+    }
+
+    const clipSrc = asset(heroClip.src)
+    const attachVideo = () => setVideoSrc(clipSrc)
+    let idleId = 0
+    let timeoutId = 0
+
+    if ('requestIdleCallback' in window) {
+      idleId = window.requestIdleCallback(attachVideo, { timeout: 2500 })
+    } else {
+      timeoutId = window.setTimeout(attachVideo, 900)
+    }
+
+    return () => {
+      cancelAnimationFrame(id)
+      if (idleId && 'cancelIdleCallback' in window) window.cancelIdleCallback(idleId)
+      if (timeoutId) window.clearTimeout(timeoutId)
+    }
+  }, [])
+
+  useEffect(() => {
+    const reduce = prefersReducedMotion()
     const el = videoRef.current
-    if (!el) return () => cancelAnimationFrame(id)
+    if (!el || !videoSrc || reduce) return undefined
 
     const onLoaded = () => {
       setVideoLoaded(true)
-      if (!reduce) el.play().catch(() => {})
-    }
-
-    if (reduce) {
-      el.removeAttribute('autoplay')
-      el.pause()
-      setVideoLoaded(true)
-      return () => cancelAnimationFrame(id)
+      el.play().catch(() => {})
     }
 
     el.muted = true
     if (el.readyState >= 2) onLoaded()
-    el.addEventListener('loadeddata', onLoaded)
+    else el.addEventListener('loadeddata', onLoaded)
     el.play().catch(() => {})
-    return () => {
-      cancelAnimationFrame(id)
-      el.removeEventListener('loadeddata', onLoaded)
-    }
-  }, [])
+    return () => el.removeEventListener('loadeddata', onLoaded)
+  }, [videoSrc])
 
   return (
     <section className={`hero${ready ? ' is-ready' : ''}`} id="top">
-      <div className="hero-media" aria-hidden="true">
+      <div
+        className={`hero-media${videoLoaded ? ' is-video-ready' : ''}`}
+        aria-hidden="true"
+      >
         <img
           className="hero-poster-fallback"
           src={asset(heroClip.poster)}
@@ -391,17 +421,18 @@ function Hero() {
           width="1920"
           height="1080"
           decoding="async"
+          fetchPriority="high"
         />
         <video
           ref={videoRef}
           className={`hero-video${videoLoaded ? ' is-loaded' : ''}`}
-          src={asset(heroClip.src)}
+          src={videoSrc ?? undefined}
           poster={asset(heroClip.poster)}
           muted
           loop
           playsInline
-          autoPlay
-          preload="metadata"
+          autoPlay={Boolean(videoSrc)}
+          preload="none"
         />
         <div className="hero-veil" />
         <div className="hero-depth" />
@@ -676,6 +707,7 @@ function About() {
 function Gallery() {
   const [filter, setFilter] = useState('all')
   const [lightboxIndex, setLightboxIndex] = useState(-1)
+  const [Lightbox, setLightbox] = useState(null)
   const items = useMemo(
     () => (filter === 'all' ? galleryItems : galleryItems.filter((g) => g.cat === filter)),
     [filter],
@@ -693,6 +725,29 @@ function Gallery() {
   useEffect(() => {
     setLightboxIndex(-1)
   }, [filter])
+
+  useEffect(() => {
+    let cancelled = false
+    Promise.all([
+      import('yet-another-react-lightbox'),
+      import('yet-another-react-lightbox/styles.css'),
+    ]).then(([mod]) => {
+      if (!cancelled) setLightbox(() => mod.default)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const openLightbox = (index) => {
+    if (!Lightbox) {
+      Promise.all([
+        import('yet-another-react-lightbox'),
+        import('yet-another-react-lightbox/styles.css'),
+      ]).then(([mod]) => setLightbox(() => mod.default))
+    }
+    setLightboxIndex(index)
+  }
 
   return (
     <section className="section" id="gallery" data-reveal>
@@ -718,7 +773,7 @@ function Gallery() {
               className="gallery-item"
               data-delay
               style={{ '--reveal-delay': `${120 + (i % 8) * 45}ms` }}
-              onClick={() => setLightboxIndex(i)}
+              onClick={() => openLightbox(i)}
               aria-label={`Открыть: ${item.alt}`}
             >
               <span className="gallery-item-media">
@@ -729,14 +784,16 @@ function Gallery() {
           ))}
         </div>
       </div>
-      <Lightbox
-        open={lightboxIndex >= 0}
-        close={() => setLightboxIndex(-1)}
-        index={lightboxIndex < 0 ? 0 : lightboxIndex}
-        slides={slides}
-        controller={{ closeOnBackdropClick: true }}
-        styles={{ container: { backgroundColor: 'rgba(14, 12, 11, 0.94)' } }}
-      />
+      {Lightbox ? (
+        <Lightbox
+          open={lightboxIndex >= 0}
+          close={() => setLightboxIndex(-1)}
+          index={lightboxIndex < 0 ? 0 : lightboxIndex}
+          slides={slides}
+          controller={{ closeOnBackdropClick: true }}
+          styles={{ container: { backgroundColor: 'rgba(14, 12, 11, 0.94)' } }}
+        />
+      ) : null}
     </section>
   )
 }
@@ -824,6 +881,7 @@ function Footer() {
             alt="UNO — салон красоты"
             width="96"
             height="40"
+            loading="lazy"
           />
           <p>
             {salon.fullName}

@@ -545,9 +545,15 @@ button {
   height: 100%;
   object-fit: cover;
   object-position: center 30%;
-  display: none;
+  display: block;
   transform: scale(1.04);
   animation: hero-poster-kenburns 24s var(--ease-premium) infinite alternate;
+  transition: opacity 1.15s ease;
+}
+
+.hero-media.is-video-ready .hero-poster-fallback {
+  opacity: 0;
+  pointer-events: none;
 }
 
 @keyframes hero-poster-kenburns {
@@ -1471,10 +1477,6 @@ button {
 @media (max-width: 719px) {
   .hero-video {
     display: none;
-  }
-
-  .hero-poster-fallback {
-    display: block;
   }
 
   .tab {
