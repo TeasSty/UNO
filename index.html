@@ -6,6 +6,20 @@
     <link rel="icon" type="image/png" href="images/logo-mark.png" sizes="96x40" />
     <link rel="apple-touch-icon" href="images/logo-mark.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      ;(function () {
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+        function toTop() {
+          if (location.hash) return
+          window.scrollTo(0, 0)
+          document.documentElement.scrollTop = 0
+          if (document.body) document.body.scrollTop = 0
+        }
+        toTop()
+        window.addEventListener('pageshow', toTop)
+        window.addEventListener('load', toTop)
+      })()
+    </script>
     <title>УНО — салон красоты в Саратове | Менякина, 4</title>
     <meta
       name="description"

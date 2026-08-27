@@ -2,6 +2,12 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import Lenis from 'lenis'
 import Lightbox from 'yet-another-react-lightbox'
 import {
+  applyEarlyPageScrollReset,
+  hasScrollHash,
+  resetPageScrollUnlessHash,
+  scrollToHashIfPresent,
+} from './scrollReset.js'
+import {
   aboutFacts,
   galleryFilters,
   galleryItems,
@@ -43,44 +49,25 @@ function scrollTabHorizontally(list, tab) {
   }
 }
 
-function resetPageScroll() {
-  window.scrollTo(0, 0)
-  document.documentElement.scrollTop = 0
-  document.body.scrollTop = 0
-}
-
 /** Full reload starts at top; explicit hash anchors still work. */
 function useInitialScroll() {
   useLayoutEffect(() => {
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual'
-    }
-
-    const hash = window.location.hash
-    if (hash.length > 1) {
-      const target = document.getElementById(decodeURIComponent(hash.slice(1)))
-      if (target) {
-        target.scrollIntoView({
-          block: 'start',
-          behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-        })
-      }
+    if (hasScrollHash()) {
+      scrollToHashIfPresent(!prefersReducedMotion())
       return
     }
 
-    resetPageScroll()
-    requestAnimationFrame(resetPageScroll)
-    requestAnimationFrame(() => requestAnimationFrame(resetPageScroll))
+    applyEarlyPageScrollReset()
   }, [])
 
-  useEffect(() => {
-    const onPageShow = (event) => {
-      if (event.persisted && !window.location.hash) {
-        resetPageScroll()
-      }
-    }
-    window.addEventListener('pageshow', onPageShow)
-    return () => window.removeEventListener('pageshow', onPageShow)
+  useLayoutEffect(() => {
+    if (hasScrollHash()) return undefined
+
+    const afterPaint = () => resetPageScrollUnlessHash()
+    requestAnimationFrame(afterPaint)
+    requestAnimationFrame(() => requestAnimationFrame(afterPaint))
+
+    return undefined
   }, [])
 }
 
@@ -120,6 +107,13 @@ function usePastHero() {
 
 /** Lenis on desktop only; destroyed when reduced-motion is on. */
 function useLenis() {
+  const initialScrollResetRef = useRef(false)
+
+  useLayoutEffect(() => {
+    if (hasScrollHash() || initialScrollResetRef.current) return
+    resetPageScrollUnlessHash()
+  }, [])
+
   useEffect(() => {
     const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)')
     const mqDesktop = window.matchMedia('(min-width: 960px)')
@@ -147,9 +141,10 @@ function useLenis() {
       })
       document.documentElement.classList.add('lenis-active')
 
-      if (!window.location.hash) {
-        resetPageScroll()
+      if (!hasScrollHash() && !initialScrollResetRef.current) {
+        resetPageScrollUnlessHash()
         lenis.scrollTo(0, { immediate: true, force: true })
+        initialScrollResetRef.current = true
       }
 
       const raf = (time) => {

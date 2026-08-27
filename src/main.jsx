@@ -2,18 +2,14 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
+import { applyEarlyPageScrollReset } from './scrollReset.js'
 
-if ('scrollRestoration' in history) {
-  history.scrollRestoration = 'manual'
-}
-if (!window.location.hash) {
-  window.scrollTo(0, 0)
-  document.documentElement.scrollTop = 0
-  document.body.scrollTop = 0
-}
+applyEarlyPageScrollReset()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
   </StrictMode>,
 )
+
+applyEarlyPageScrollReset()
