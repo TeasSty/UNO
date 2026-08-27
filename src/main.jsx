@@ -8,6 +8,8 @@ if ('scrollRestoration' in history) {
 }
 if (!window.location.hash) {
   window.scrollTo(0, 0)
+  document.documentElement.scrollTop = 0
+  document.body.scrollTop = 0
 }
 
 createRoot(document.getElementById('root')).render(

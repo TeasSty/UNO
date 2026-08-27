@@ -27,6 +27,28 @@ function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
+/** Horizontal tab-strip scroll only — never moves the page (unlike scrollIntoView). */
+function scrollTabHorizontally(list, tab) {
+  if (!list || !tab) return
+  const pad = 8
+  const tabLeft = tab.offsetLeft
+  const tabRight = tabLeft + tab.offsetWidth
+  const viewLeft = list.scrollLeft
+  const viewRight = viewLeft + list.clientWidth
+
+  if (tabLeft < viewLeft + pad) {
+    list.scrollLeft = Math.max(0, tabLeft - pad)
+  } else if (tabRight > viewRight - pad) {
+    list.scrollLeft = tabRight - list.clientWidth + pad
+  }
+}
+
+function resetPageScroll() {
+  window.scrollTo(0, 0)
+  document.documentElement.scrollTop = 0
+  document.body.scrollTop = 0
+}
+
 /** Full reload starts at top; explicit hash anchors still work. */
 function useInitialScroll() {
   useLayoutEffect(() => {
@@ -46,13 +68,19 @@ function useInitialScroll() {
       return
     }
 
-    const reset = () => {
-      window.scrollTo(0, 0)
-      document.documentElement.scrollTop = 0
-      document.body.scrollTop = 0
+    resetPageScroll()
+    requestAnimationFrame(resetPageScroll)
+    requestAnimationFrame(() => requestAnimationFrame(resetPageScroll))
+  }, [])
+
+  useEffect(() => {
+    const onPageShow = (event) => {
+      if (event.persisted && !window.location.hash) {
+        resetPageScroll()
+      }
     }
-    reset()
-    requestAnimationFrame(reset)
+    window.addEventListener('pageshow', onPageShow)
+    return () => window.removeEventListener('pageshow', onPageShow)
   }, [])
 }
 
@@ -120,8 +148,8 @@ function useLenis() {
       document.documentElement.classList.add('lenis-active')
 
       if (!window.location.hash) {
+        resetPageScroll()
         lenis.scrollTo(0, { immediate: true, force: true })
-        window.scrollTo(0, 0)
       }
 
       const raf = (time) => {
@@ -167,7 +195,6 @@ function useReveal() {
 
 function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist', className = '' }) {
   const listRef = useRef(null)
-  const skipTabScrollRef = useRef(true)
   const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false })
 
   const updateIndicator = () => {
@@ -186,24 +213,10 @@ function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist', c
     updateIndicator()
   }, [activeId, items])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const list = listRef.current
-    if (!list) return undefined
-
-    if (skipTabScrollRef.current) {
-      skipTabScrollRef.current = false
-      list.scrollLeft = 0
-      updateIndicator()
-      return undefined
-    }
-
-    const active = list.querySelector('.tab.is-active')
-    active?.scrollIntoView({
-      inline: 'nearest',
-      block: 'nearest',
-      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-    })
-  }, [activeId])
+    if (list) list.scrollLeft = 0
+  }, [])
 
   useEffect(() => {
     const list = listRef.current
@@ -239,7 +252,11 @@ function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist', c
           role={role === 'tablist' ? 'tab' : undefined}
           aria-selected={t.id === activeId}
           className={`tab${t.id === activeId ? ' is-active' : ''}`}
-          onClick={() => onChange(t.id)}
+          onClick={(e) => {
+            onChange(t.id)
+            const list = listRef.current
+            if (list) scrollTabHorizontally(list, e.currentTarget)
+          }}
         >
           {t.label}
         </button>
