@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react'
 
 const STORAGE_KEY = 'uno-cookie-consent'
 
-export default function CookieConsent({ onOpenPrivacy }) {
+function privacyHref() {
+  const base = import.meta.env.BASE_URL || '/'
+  return `${base}privacy.html`
+}
+
+export default function CookieConsent() {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -27,25 +32,25 @@ export default function CookieConsent({ onOpenPrivacy }) {
 
   return (
     <div className="cookie-banner" role="dialog" aria-labelledby="cookie-title" aria-live="polite">
-      <div className="cookie-banner-inner">
-        <div className="cookie-banner-copy">
+      <div className="container cookie-banner-inner">
+        <div>
           <p id="cookie-title" className="cookie-banner-title">
             Мы используем cookie
           </p>
-          <p className="cookie-banner-text">
+          <p className="cookie-banner-desc">
             Сайт применяет файлы cookie и локальное хранилище для корректной работы и запоминания
             вашего выбора. Подробнее — в{' '}
-            <button type="button" className="cookie-banner-link" onClick={onOpenPrivacy}>
+            <a className="cookie-inline-link" href={privacyHref()}>
               Политике конфиденциальности
-            </button>
+            </a>
             .
           </p>
         </div>
         <div className="cookie-banner-actions">
-          <button type="button" className="btn btn-secondary cookie-btn" onClick={() => persist('declined')}>
+          <button type="button" className="btn btn-secondary btn-sm" onClick={() => persist('declined')}>
             Отклонить
           </button>
-          <button type="button" className="btn btn-primary cookie-btn" onClick={() => persist('accepted')}>
+          <button type="button" className="btn btn-primary btn-sm" onClick={() => persist('accepted')}>
             Принять
           </button>
         </div>

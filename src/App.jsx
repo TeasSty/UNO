@@ -1,8 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import CookieConsent from './components/CookieConsent.jsx'
-import LegalOverlay from './components/LegalOverlay.jsx'
-import SignatureWidget from './components/SignatureWidget.tsx'
-import { personalDataConsentSections, privacyPolicySections } from './data/legal.js'
 import {
   applyEarlyPageScrollReset,
   finishScrollInitWithoutLenis,
@@ -25,10 +22,15 @@ import {
 
 const BOOK_VK = salon.booking
 const BOOK_TG = salon.telegram
-const BOOK_MAX = salon.max
+const BOOK_MAX = salon.max.href
 const BOOK_PHONE = salon.phones[0].href
 
-function MessengerLinks({ className = 'block-link' }) {
+function legalHref(page) {
+  const base = import.meta.env.BASE_URL || '/'
+  return `${base}${page}.html`
+}
+
+function MessengerLinks({ className = 'block-link', showPhone = false }) {
   return (
     <>
       <a className={className} href={salon.vk} target="_blank" rel="noreferrer">
@@ -37,8 +39,14 @@ function MessengerLinks({ className = 'block-link' }) {
       <a className={className} href={salon.telegram} target="_blank" rel="noreferrer">
         Telegram
       </a>
-      <a className={className} href={salon.max.phone} title={salon.max.display}>
-        MAX {salon.max.display}
+      <a
+        className={className}
+        href={salon.max.href}
+        target="_blank"
+        rel="noreferrer"
+        title={`Написать в MAX: ${salon.max.display}`}
+      >
+        MAX{showPhone ? ` ${salon.max.display}` : ''}
       </a>
     </>
   )
@@ -188,7 +196,7 @@ function useLenis() {
         if (!scrollSynced && !hasScrollHash()) {
           const atTop = syncLenisToTop(lenis)
           stableFrames = atTop ? stableFrames + 1 : 0
-          if (stableFrames >= 8) {
+          if (stableFrames >= 3) {
             scrollSynced = true
             markLenisReady()
           }
@@ -391,10 +399,7 @@ function Header({ menuOpen, setMenuOpen }) {
           <a className="btn btn-secondary" href={BOOK_TG} target="_blank" rel="noreferrer">
             Telegram
           </a>
-          <a className="btn btn-secondary" href={BOOK_MAX}>
-            MAX
-          </a>
-          <a className="btn btn-secondary" href={salon.max.phone}>
+          <a className="btn btn-secondary" href={BOOK_MAX} target="_blank" rel="noreferrer">
             MAX
           </a>
         </div>
@@ -405,7 +410,6 @@ function Header({ menuOpen, setMenuOpen }) {
 
 function Hero() {
   const videoRef = useRef(null)
-  const heroRef = useRef(null)
   const [ready, setReady] = useState(false)
   const [videoLoaded, setVideoLoaded] = useState(false)
   const [videoSrc, setVideoSrc] = useState(null)
@@ -455,7 +459,7 @@ function Hero() {
   }, [videoSrc])
 
   return (
-    <section className={`hero${ready ? ' is-ready' : ''}`} id="top" ref={heroRef}>
+    <section className={`hero${ready ? ' is-ready' : ''}`} id="top">
       <div
         className={`hero-media${videoLoaded ? ' is-video-ready' : ''}`}
         aria-hidden="true"
@@ -484,7 +488,6 @@ function Hero() {
         <div className="hero-depth" />
         <div className="hero-grain" />
       </div>
-      <SignatureWidget heroRef={heroRef} />
       <div className="container hero-stage">
         <div className="hero-content">
           <p className="hero-loc hero-enter" data-hero-step="0">
@@ -511,18 +514,7 @@ function Hero() {
             </a>
           </div>
         </div>
-        <div className="hero-rail hero-enter" data-hero-step="5">
-          <p className="hero-rail-services">Волосы <span /> Ногти <span /> Лицо <span /> Тело</p>
-          <p className="hero-meta">
-            {salon.addressShort}<br />
-            {salon.hours}
-          </p>
-        </div>
       </div>
-      <a className="hero-scroll-cue hero-enter" data-hero-step="5" href="#booking" aria-label="Прокрутить к записи">
-        <span>Смотреть</span>
-        <i aria-hidden="true" />
-      </a>
     </section>
   )
 }
@@ -566,7 +558,10 @@ function BookingSteps() {
             Telegram
           </a>{' '}
           или{' '}
-          <a href={BOOK_MAX}>MAX</a> — либо{' '}
+          <a href={BOOK_MAX} target="_blank" rel="noreferrer">
+            MAX
+          </a>{' '}
+          — либо{' '}
           <a href={BOOK_PHONE}>позвоните администратору</a>.
         </p>
       </div>
@@ -587,10 +582,10 @@ function QuoteBand() {
 
 function Services({ tabId, setTabId }) {
   const tab = serviceTabs.find((t) => t.id === tabId) ?? serviceTabs[0]
-  const [openGroups, setOpenGroups] = useState(() => new Set([0]))
+  const [openGroups, setOpenGroups] = useState(() => new Set())
 
   useEffect(() => {
-    setOpenGroups(new Set([0]))
+    setOpenGroups(new Set())
   }, [tabId])
 
   const toggleGroup = (index) => {
@@ -858,6 +853,23 @@ function Gallery() {
 }
 
 function Contacts() {
+  const [mapReady, setMapReady] = useState(false)
+
+  useEffect(() => {
+    if (hasScrollHash()) {
+      setMapReady(true)
+      return undefined
+    }
+
+    const reveal = () => setMapReady(true)
+    const timer = window.setTimeout(reveal, 1800)
+    window.addEventListener('load', reveal, { once: true })
+    return () => {
+      window.clearTimeout(timer)
+      window.removeEventListener('load', reveal)
+    }
+  }, [])
+
   return (
     <section className="section section-alt" id="contacts" data-reveal>
       <div className="container contacts-grid">
@@ -912,63 +924,81 @@ function Contacts() {
           </div>
         </div>
         <div className="map-wrap" data-delay style={{ '--reveal-delay': '120ms' }}>
-          <iframe
-            title="Карта: салон УНО на Менякина, 4"
-            src={salon.mapEmbed}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-          />
+          {mapReady ? (
+            <iframe
+              title="Карта: салон УНО на Менякина, 4"
+              src={salon.mapEmbed}
+              loading="lazy"
+              tabIndex={-1}
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          ) : (
+            <div className="map-placeholder" aria-hidden="true" />
+          )}
         </div>
       </div>
     </section>
   )
 }
 
-function Footer({ onPrivacy, onConsent }) {
+function Footer() {
   const year = new Date().getFullYear()
   return (
     <footer className="site-footer">
       <div className="container footer-inner">
-        <div className="footer-brand">
+        <div className="footer-row footer-row-brand">
           <img
             src={asset('images/logo-uno.webp')}
             alt="УНО — салон красоты"
-            width="96"
+            width="148"
             height="40"
             loading="lazy"
           />
-          <p>
-            {salon.fullName}
-            <br />
-            {salon.address}
-          </p>
+          <div>
+            <p className="footer-salon-name">{salon.fullName}</p>
+            <p className="footer-address">{salon.address}</p>
+          </div>
         </div>
-        <div className="footer-links">
+
+        <div className="footer-row footer-row-messengers" aria-label="Мессенджеры">
           <a href={salon.vk} target="_blank" rel="noreferrer">
-            VK — запись
+            VK
           </a>
+          <span className="footer-sep" aria-hidden="true">
+            |
+          </span>
           <a href={salon.telegram} target="_blank" rel="noreferrer">
             Telegram
           </a>
-          <a href={salon.max.phone}>MAX {salon.max.display}</a>
+          <span className="footer-sep" aria-hidden="true">
+            |
+          </span>
+          <a href={salon.max.href} target="_blank" rel="noreferrer">
+            MAX
+          </a>
+        </div>
+
+        <div className="footer-row footer-row-phones" aria-label="Телефоны салона">
           {salon.phones.map((ph) => (
             <a key={ph.href} href={ph.href}>
-              {ph.display}
+              <span className="footer-phone-label">{ph.label ?? ph.display}</span>
+              <span className="footer-phone-value">{ph.display}</span>
             </a>
           ))}
-          <button type="button" className="footer-legal-link" onClick={onPrivacy}>
-            Политика конфиденциальности
-          </button>
-          <button type="button" className="footer-legal-link" onClick={onConsent}>
-            Согласие на обработку ПДн
-          </button>
         </div>
-        <p className="footer-note">
-          © {year} УНО · Саратов
-          <br />
-          Ежедневно {salon.hours.replace('Ежедневно ', '')}
-        </p>
+
+        <div className="footer-row footer-row-meta">
+          <div className="footer-legal">
+            <a href={legalHref('privacy')}>Политика конфиденциальности</a>
+            <a href={legalHref('consent')}>Согласие на обработку ПДн</a>
+          </div>
+          <p className="footer-note">
+            © {year} УНО · Саратов
+            <br />
+            Ежедневно {salon.hours.replace('Ежедневно ', '')}
+          </p>
+        </div>
       </div>
     </footer>
   )
@@ -994,7 +1024,6 @@ function StickyCta({ visible }) {
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [legalView, setLegalView] = useState(null)
   const [serviceTabId, setServiceTabId] = useState(serviceTabs[0].id)
   const pastHero = usePastHero()
   useInitialScroll()
@@ -1023,23 +1052,8 @@ export default function App() {
         <Gallery />
         <Contacts />
       </main>
-      <Footer
-        onPrivacy={() => setLegalView('privacy')}
-        onConsent={() => setLegalView('consent')}
-      />
-      <CookieConsent onOpenPrivacy={() => setLegalView('privacy')} />
-      <LegalOverlay
-        open={legalView === 'privacy'}
-        title="Политика конфиденциальности"
-        sections={privacyPolicySections}
-        onClose={() => setLegalView(null)}
-      />
-      <LegalOverlay
-        open={legalView === 'consent'}
-        title="Согласие на обработку персональных данных"
-        sections={personalDataConsentSections}
-        onClose={() => setLegalView(null)}
-      />
+      <Footer />
+      <CookieConsent />
       <StickyCta visible={pastHero} />
     </>
   )

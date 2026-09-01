@@ -10,14 +10,19 @@ export const salon = {
   hours: 'Ежедневно 09:00–20:00',
   hoursNote: 'По предварительной записи',
   phones: [
-    { display: '+7 (8452) 90-04-25', href: 'tel:+78452900425', short: '900-425' },
-    { display: '+7 (908) 557-75-88', href: 'tel:+79085577588', short: '557-75-88' },
+    { display: '+7 (8452) 90-04-25', href: 'tel:+78452900425', short: '900-425', label: 'Городской' },
+    { display: '+7 (908) 557-75-88', href: 'tel:+79085577588', short: '557-75-88', label: 'Мобильный' },
   ],
   /** Primary booking for now — VK community */
   booking: 'https://vk.com/uno.saratov64',
   telegram: 'https://t.me/unosaratov64',
   vk: 'https://vk.com/uno.saratov64',
-  max: { label: 'MAX', href: 'https://max.ru/', phone: 'tel:+79085577588', display: '+7 (908) 557-75-88' },
+  max: {
+    label: 'MAX',
+    href: 'https://max.ru/+79085577588',
+    phone: 'tel:+79085577588',
+    display: '+7 (908) 557-75-88',
+  },
   mapEmbed:
     'https://yandex.ru/map-widget/v1/?ll=46.07547%2C51.575792&z=17&pt=46.07547,51.575792,pm2rdm',
   mapLink: 'https://yandex.ru/maps/?pt=46.07547,51.575792&z=17&l=map',

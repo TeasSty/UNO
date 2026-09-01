@@ -108,9 +108,10 @@ function forceTopUnlessUserScrolling() {
   const docTop = document.documentElement.scrollTop
   const lenisDrift = lenisScrollGuard && lenisScrollGuard.scroll > 1
   const elapsed = performance.now() - pageLoadTime
+  const lateJump = y > SOFT_GUARD_THRESHOLD && lastSoftGuardY <= 80
 
   if (scrollGuardsActive) {
-    if (y > 0 || docTop > 0 || lenisDrift) {
+    if (y > 0 || docTop > 0 || lenisDrift || lateJump) {
       resetPageScrollUnlessHash()
       lenisScrollGuard?.scrollTo(0, { immediate: true, force: true })
     }
@@ -118,7 +119,7 @@ function forceTopUnlessUserScrolling() {
     return
   }
 
-  if (elapsed < SOFT_GUARD_MS && y > SOFT_GUARD_THRESHOLD && lastSoftGuardY <= 80) {
+  if (elapsed < SOFT_GUARD_MS && lateJump) {
     resetPageScrollUnlessHash()
     lenisScrollGuard?.scrollTo(0, { immediate: true, force: true })
     lastSoftGuardY = 0
@@ -246,6 +247,20 @@ export function applyEarlyPageScrollReset() {
   installUnloadScrollSnap()
   installScrollGuards()
   beginRestoreGuards()
+
+  if (!window.__unoScrollLoadHook) {
+    window.__unoScrollLoadHook = true
+    window.addEventListener(
+      'load',
+      () => {
+        resetPageScrollUnlessHash()
+        requestAnimationFrame(resetPageScrollUnlessHash)
+        window.setTimeout(resetPageScrollUnlessHash, 0)
+        window.setTimeout(resetPageScrollUnlessHash, 120)
+      },
+      { once: true },
+    )
+  }
 }
 
 export function scrollToHashIfPresent(preferSmooth = false) {

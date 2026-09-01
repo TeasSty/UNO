@@ -18,6 +18,9 @@
   --shadow: 0 10px 32px rgba(20, 18, 16, 0.07);
   --font: 'Manrope', system-ui, sans-serif;
   --font-display: 'Cormorant Garamond', 'Times New Roman', serif;
+  --surface-elevated: var(--surface);
+  --border-subtle: var(--line);
+  --text-muted: var(--muted);
   --header-h: 72px;
   --sticky-h: 72px;
   color: var(--ink);
@@ -334,12 +337,11 @@ button {
   max-width: 160px;
   object-fit: contain;
   object-position: left center;
-  filter: brightness(0) invert(1);
-  transition: filter 0.28s ease;
+  transition: opacity 0.28s ease;
 }
 
 .site-header.is-scrolled .brand img {
-  filter: none;
+  height: 36px;
 }
 
 .nav-desktop {
@@ -1531,32 +1533,37 @@ button {
 /* Footer */
 .site-footer {
   padding: 2.75rem 0 6rem;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   background: var(--ink);
   color: rgba(255, 255, 255, 0.78);
 }
 
 .footer-inner {
   display: grid;
-  gap: 1.25rem;
+  gap: 1.35rem;
 }
 
-.footer-brand {
+.footer-row {
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem 1.25rem;
+}
+
+.footer-row-brand {
   align-items: center;
 }
 
-.footer-brand img {
-  height: 40px;
+.footer-row-brand img {
+  height: 44px;
   width: auto;
-  max-width: 120px;
+  max-width: 168px;
   object-fit: contain;
-  filter: brightness(0) invert(1);
-  opacity: 0.92;
+  flex-shrink: 0;
 }
 
-.footer-brand p,
+.footer-salon-name,
+.footer-address,
 .footer-note {
   margin: 0;
   color: rgba(255, 255, 255, 0.58);
@@ -1564,20 +1571,154 @@ button {
   line-height: 1.5;
 }
 
-.footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+.footer-salon-name {
+  color: rgba(255, 255, 255, 0.92);
   font-weight: 700;
 }
 
-.footer-links a {
+.footer-row-messengers a,
+.footer-row-phones a,
+.footer-legal a {
   text-decoration: none;
   color: #fff;
+  font-weight: 700;
 }
 
-.footer-links a:hover {
+.footer-row-messengers a:hover,
+.footer-row-phones a:hover,
+.footer-legal a:hover {
   color: #f2a8ab;
+}
+
+.footer-sep {
+  color: rgba(255, 255, 255, 0.28);
+  font-weight: 500;
+}
+
+.footer-row-phones {
+  gap: 1rem 1.75rem;
+}
+
+.footer-row-phones a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.footer-phone-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.footer-phone-value {
+  font-size: 0.98rem;
+}
+
+.footer-row-meta {
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem 2rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  font-size: 0.9rem;
+}
+
+.map-placeholder {
+  width: 100%;
+  height: 320px;
+  background: linear-gradient(145deg, #eceae7, #e2dfdb);
+}
+
+/* Legal standalone pages */
+.legal-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.legal-page-header {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.legal-page-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.legal-page-brand img {
+  height: 40px;
+  width: auto;
+  max-width: 148px;
+}
+
+.legal-page-main {
+  flex: 1;
+  padding: 2.5rem 0 3.5rem;
+}
+
+.legal-page-content h1 {
+  margin: 0.35rem 0 1.75rem;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.legal-page-section + .legal-page-section {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.legal-page-section h2 {
+  margin: 0 0 0.85rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.legal-page-section p {
+  margin: 0 0 0.75rem;
+  color: var(--ink-soft);
+  line-height: 1.65;
+}
+
+.legal-page-footer {
+  padding: 1.5rem 0 2rem;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.legal-page-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.legal-page-footer a {
+  color: var(--brand);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.legal-page-footer a:hover {
+  text-decoration: underline;
 }
 
 /* Sticky CTA — one clear primary */
@@ -1991,9 +2132,8 @@ button {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .footer-inner {
-    grid-template-columns: 1.4fr 1fr auto;
-    align-items: center;
+  .footer-row-meta {
+    flex-direction: column;
   }
 }
 
@@ -2111,6 +2251,10 @@ button {
   padding: 0;
   cursor: pointer;
   font: inherit;
+  color: var(--brand);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  display: inline;
 }
 .btn-sm {
   padding: 0.45rem 0.9rem;
