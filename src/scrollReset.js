@@ -6,6 +6,12 @@ export function hasScrollHash() {
   return id !== 'top'
 }
 
+export function hasContactsHash() {
+  const hash = window.location.hash
+  if (hash.length <= 1) return false
+  return decodeURIComponent(hash.slice(1)) === 'contacts'
+}
+
 const SCROLL_LOCK_CLASS = 'scroll-init-lock'
 const SCROLL_SMOOTH_CLASS = 'scroll-smooth-ready'
 /** Hard guard: reset drift right after reload (does not block user scroll). */
@@ -54,6 +60,14 @@ export function resetPageScrollUnlessHash() {
   if (hasScrollHash()) return
   disableScrollRestoration()
   resetPageScroll()
+}
+
+/** Re-apply hero/top scroll after async mounts — respects user scroll intent. */
+export function reassertScrollTopUnlessHash() {
+  if (hasScrollHash()) return
+  if (userScrollIntentActive() || userHasScrolledDown) return
+  resetPageScrollUnlessHash()
+  lenisScrollGuard?.scrollTo(0, { immediate: true, force: true })
 }
 
 export function registerLenisScrollGuards(lenis) {
@@ -202,16 +216,21 @@ function beginRestoreGuards() {
   startGuardLoop()
 }
 
-function onBfcacheRestore(event) {
-  if (!event?.persisted) return
+function onPageShow(event) {
   disableScrollRestoration()
   if (hasScrollHash()) {
     scrollGuardsActive = false
     releaseScrollInitLock()
     return
   }
-  lockScrollInit()
+
   resetPageScrollUnlessHash()
+  lenisScrollGuard?.scrollTo(0, { immediate: true, force: true })
+
+  if (event?.persisted) lockScrollInit()
+
+  userHasScrolledDown = false
+  lastSoftGuardY = 0
   beginRestoreGuards()
 }
 
@@ -219,7 +238,7 @@ function installScrollGuards() {
   if (lateGuardsInstalled) return
   lateGuardsInstalled = true
 
-  window.addEventListener('pageshow', onBfcacheRestore)
+  window.addEventListener('pageshow', onPageShow)
   window.addEventListener('wheel', onUserScrollIntent, { passive: true })
   window.addEventListener('touchstart', onUserScrollIntent, { passive: true })
   window.addEventListener('keydown', (event) => {
@@ -263,10 +282,12 @@ export function applyEarlyPageScrollReset() {
     window.addEventListener(
       'load',
       () => {
-        resetPageScrollUnlessHash()
-        requestAnimationFrame(resetPageScrollUnlessHash)
-        window.setTimeout(resetPageScrollUnlessHash, 0)
-        window.setTimeout(resetPageScrollUnlessHash, 120)
+        reassertScrollTopUnlessHash()
+        requestAnimationFrame(reassertScrollTopUnlessHash)
+        window.setTimeout(reassertScrollTopUnlessHash, 0)
+        window.setTimeout(reassertScrollTopUnlessHash, 120)
+        window.setTimeout(reassertScrollTopUnlessHash, 500)
+        window.setTimeout(reassertScrollTopUnlessHash, 1500)
       },
       { once: true },
     )

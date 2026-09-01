@@ -3,9 +3,11 @@ import CookieConsent from './components/CookieConsent.jsx'
 import {
   applyEarlyPageScrollReset,
   finishScrollInitWithoutLenis,
+  hasContactsHash,
   hasScrollHash,
   markLenisReady,
   registerLenisScrollGuards,
+  reassertScrollTopUnlessHash,
   resetPageScrollUnlessHash,
   scrollToHashIfPresent,
   syncLenisToTop,
@@ -92,9 +94,11 @@ function useInitialScroll() {
   useLayoutEffect(() => {
     if (hasScrollHash()) return undefined
 
-    const afterPaint = () => resetPageScrollUnlessHash()
+    const afterPaint = () => reassertScrollTopUnlessHash()
     requestAnimationFrame(afterPaint)
     requestAnimationFrame(() => requestAnimationFrame(afterPaint))
+    window.setTimeout(reassertScrollTopUnlessHash, 0)
+    window.setTimeout(reassertScrollTopUnlessHash, 200)
 
     const desktop = window.matchMedia('(min-width: 960px)')
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -866,22 +870,78 @@ function Gallery() {
 }
 
 function Contacts() {
-  const [mapReady, setMapReady] = useState(false)
+  const mapWrapRef = useRef(null)
+  const [mapReady, setMapReady] = useState(() => hasContactsHash())
+
+  const loadMap = () => setMapReady(true)
 
   useEffect(() => {
-    if (hasScrollHash()) {
-      setMapReady(true)
-      return undefined
+    if (mapReady || hasContactsHash()) return undefined
+
+    const target = mapWrapRef.current
+    if (!target) return undefined
+
+    let userEngaged = false
+    const markEngaged = () => {
+      userEngaged = true
     }
 
-    const reveal = () => setMapReady(true)
-    const timer = window.setTimeout(reveal, 1800)
-    window.addEventListener('load', reveal, { once: true })
-    return () => {
-      window.clearTimeout(timer)
-      window.removeEventListener('load', reveal)
+    window.addEventListener('wheel', markEngaged, { passive: true })
+    window.addEventListener('touchstart', markEngaged, { passive: true })
+    window.addEventListener('keydown', markEngaged)
+
+    if (typeof IntersectionObserver === 'undefined') {
+      return () => {
+        window.removeEventListener('wheel', markEngaged)
+        window.removeEventListener('touchstart', markEngaged)
+        window.removeEventListener('keydown', markEngaged)
+      }
     }
-  }, [])
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!userEngaged) return
+        if (entries.some((entry) => entry.isIntersecting)) {
+          loadMap()
+          io.disconnect()
+        }
+      },
+      { root: null, rootMargin: '96px 0px', threshold: 0.05 },
+    )
+    io.observe(target)
+
+    return () => {
+      io.disconnect()
+      window.removeEventListener('wheel', markEngaged)
+      window.removeEventListener('touchstart', markEngaged)
+      window.removeEventListener('keydown', markEngaged)
+    }
+  }, [mapReady])
+
+  useEffect(() => {
+    if (!mapReady || hasScrollHash()) return undefined
+
+    reassertScrollTopUnlessHash()
+    const rafId = requestAnimationFrame(reassertScrollTopUnlessHash)
+    const t0 = window.setTimeout(reassertScrollTopUnlessHash, 0)
+    const t1 = window.setTimeout(reassertScrollTopUnlessHash, 120)
+    const t2 = window.setTimeout(reassertScrollTopUnlessHash, 400)
+
+    return () => {
+      cancelAnimationFrame(rafId)
+      window.clearTimeout(t0)
+      window.clearTimeout(t1)
+      window.clearTimeout(t2)
+    }
+  }, [mapReady])
+
+  const handleMapLoad = () => {
+    reassertScrollTopUnlessHash()
+    requestAnimationFrame(reassertScrollTopUnlessHash)
+    window.setTimeout(reassertScrollTopUnlessHash, 0)
+    window.setTimeout(reassertScrollTopUnlessHash, 150)
+    window.setTimeout(reassertScrollTopUnlessHash, 600)
+  }
 
   return (
     <section className="section section-alt" id="contacts" data-reveal>
@@ -936,7 +996,12 @@ function Contacts() {
             </a>
           </div>
         </div>
-        <div className="map-wrap" data-delay style={{ '--reveal-delay': '120ms' }}>
+        <div
+          className="map-wrap"
+          ref={mapWrapRef}
+          data-delay
+          style={{ '--reveal-delay': '120ms' }}
+        >
           {mapReady ? (
             <iframe
               title="Карта: салон УНО на Менякина, 4"
@@ -945,9 +1010,17 @@ function Contacts() {
               tabIndex={-1}
               referrerPolicy="no-referrer-when-downgrade"
               allowFullScreen
+              onLoad={handleMapLoad}
             />
           ) : (
-            <div className="map-placeholder" aria-hidden="true" />
+            <button
+              type="button"
+              className="map-placeholder map-load-trigger"
+              onClick={loadMap}
+              aria-label="Показать карту проезда"
+            >
+              <span className="map-load-label">Показать карту</span>
+            </button>
           )}
         </div>
       </div>
