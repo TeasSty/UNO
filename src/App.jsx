@@ -180,9 +180,10 @@ function useLenis() {
       if (!hasScrollHash()) resetPageScrollUnlessHash()
 
       lenis = new Lenis({
-        duration: 1.05,
+        lerp: 0.09,
         smoothWheel: true,
-        touchMultiplier: 1.4,
+        wheelMultiplier: 0.82,
+        touchMultiplier: 1.15,
         stopInertiaOnNavigate: true,
       })
       document.documentElement.classList.add('lenis-active')
@@ -322,6 +323,16 @@ function Header({ menuOpen, setMenuOpen }) {
       <div className="container header-inner">
         <a className="brand" href="#top" aria-label="УНО — на главную">
           <img
+            className="brand-logo brand-logo--light"
+            src={asset('images/logo-uno-white.webp')}
+            alt=""
+            width="148"
+            height="40"
+            fetchPriority="high"
+            aria-hidden="true"
+          />
+          <img
+            className="brand-logo brand-logo--dark"
             src={asset('images/logo-uno.webp')}
             alt="УНО"
             width="148"
@@ -493,18 +504,20 @@ function Hero() {
           <p className="hero-loc hero-enter" data-hero-step="0">
             Салон красоты · Саратов
           </p>
-          <h1>
-            <span className="h1-brand hero-enter" data-hero-step="1">
-              УНО
-            </span>
-            <span className="h1-sub hero-enter" data-hero-step="2">
-              Управление новыми <em>образами</em>
-            </span>
+          <h1 className="hero-brand hero-enter" data-hero-step="1">
+            <img
+              className="hero-logo"
+              src={asset('images/logo-uno-white.webp')}
+              alt="УНО — Управление новыми образами"
+              width="680"
+              height="125"
+              fetchPriority="high"
+            />
           </h1>
-          <p className="lead hero-enter" data-hero-step="3">
+          <p className="lead hero-enter" data-hero-step="2">
             От точного штриха до цельного образа — полный цикл beauty-услуг в одном месте.
           </p>
-          <div className="hero-cta hero-enter" data-hero-step="4">
+          <div className="hero-cta hero-enter" data-hero-step="3">
             <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
               <span>Записаться</span>
               <span className="hero-cta-arrow" aria-hidden="true">↗</span>
@@ -949,10 +962,10 @@ function Footer() {
       <div className="container footer-inner">
         <div className="footer-row footer-row-brand">
           <img
-            src={asset('images/logo-uno.webp')}
+            src={asset('images/logo-uno-white.webp')}
             alt="УНО — салон красоты"
-            width="148"
-            height="40"
+            width="168"
+            height="48"
             loading="lazy"
           />
           <div>

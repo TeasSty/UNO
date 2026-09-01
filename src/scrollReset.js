@@ -31,6 +31,8 @@ let stableTopFrames = 0
 let lenisScrollGuard = null
 let guardRafId = 0
 let lastSoftGuardY = 0
+/** Set after wheel/touch/keyboard scroll — stops guards from fighting user scroll. */
+let userHasScrolledDown = false
 
 export function disableScrollRestoration() {
   if ('scrollRestoration' in history) {
@@ -99,31 +101,38 @@ function tryEarlyOverflowRelease() {
 
 function onUserScrollIntent() {
   noteUserScrollInput()
+  userHasScrolledDown = true
   releaseOverflowLock()
 }
 
 function forceTopUnlessUserScrolling() {
   if (userScrollIntentActive()) return
+  if (userHasScrolledDown) {
+    lastSoftGuardY = window.scrollY
+    return
+  }
+
   const y = window.scrollY
   const docTop = document.documentElement.scrollTop
   const lenisDrift = lenisScrollGuard && lenisScrollGuard.scroll > 1
   const elapsed = performance.now() - pageLoadTime
   const lateJump = y > SOFT_GUARD_THRESHOLD && lastSoftGuardY <= 80
 
-  if (scrollGuardsActive) {
-    if (y > 0 || docTop > 0 || lenisDrift || lateJump) {
-      resetPageScrollUnlessHash()
-      lenisScrollGuard?.scrollTo(0, { immediate: true, force: true })
-    }
-    lastSoftGuardY = y
+  // Browser restoration: sudden jump without user input (mid-init reload, bfcache drift).
+  if (
+    lateJump
+    || (scrollGuardsActive && elapsed < HARD_GUARD_MS && y > SOFT_GUARD_THRESHOLD)
+  ) {
+    resetPageScrollUnlessHash()
+    lenisScrollGuard?.scrollTo(0, { immediate: true, force: true })
+    lastSoftGuardY = lateJump ? 0 : y
     return
   }
 
-  if (elapsed < SOFT_GUARD_MS && lateJump) {
+  // Hard guard: suppress small pre-interaction drift only (F5 / reload snap-back).
+  if (scrollGuardsActive && elapsed < HARD_GUARD_MS && (y > 0 || docTop > 0 || lenisDrift)) {
     resetPageScrollUnlessHash()
     lenisScrollGuard?.scrollTo(0, { immediate: true, force: true })
-    lastSoftGuardY = 0
-    return
   }
 
   lastSoftGuardY = y
@@ -187,6 +196,7 @@ function startGuardLoop() {
 function beginRestoreGuards() {
   scrollGuardsActive = true
   lenisReady = false
+  userHasScrolledDown = false
   pageLoadTime = performance.now()
   lastSoftGuardY = 0
   startGuardLoop()

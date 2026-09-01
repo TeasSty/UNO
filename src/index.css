@@ -331,7 +331,13 @@ button {
   gap: 1rem;
 }
 
-.brand img {
+.brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.brand-logo {
   width: auto;
   height: 34px;
   max-width: 160px;
@@ -340,7 +346,16 @@ button {
   transition: opacity 0.28s ease;
 }
 
-.site-header.is-scrolled .brand img {
+.brand-logo--dark {
+  display: none;
+}
+
+.site-header.is-scrolled .brand-logo--light {
+  display: none;
+}
+
+.site-header.is-scrolled .brand-logo--dark {
+  display: block;
   height: 36px;
 }
 
@@ -677,8 +692,18 @@ button {
   background: var(--brand);
 }
 
-.hero h1 {
+.hero h1,
+.hero-brand {
   margin: 0;
+}
+
+.hero-logo {
+  display: block;
+  width: min(92vw, 34rem);
+  height: auto;
+  max-height: clamp(4.5rem, 14vw, 7.5rem);
+  object-fit: contain;
+  object-position: left center;
 }
 
 .h1-brand {
@@ -1056,6 +1081,7 @@ button {
   scroll-padding-inline: 1rem;
   padding-inline: 1rem;
   margin-inline: -1rem;
+  overscroll-behavior-x: contain;
 }
 
 .tabs--price .tab {
@@ -1555,9 +1581,9 @@ button {
 }
 
 .footer-row-brand img {
-  height: 44px;
+  height: clamp(2.5rem, 8vw, 3.25rem);
   width: auto;
-  max-width: 168px;
+  max-width: min(92vw, 14rem);
   object-fit: contain;
   flex-shrink: 0;
 }
