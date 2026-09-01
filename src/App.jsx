@@ -683,6 +683,10 @@ function Services({ tabId, setTabId }) {
               )
             })}
           </div>
+
+          {tab.asteriskNote ? (
+            <p className="services-footnote">{tab.asteriskNote}</p>
+          ) : null}
         </div>
 
         <p className="services-footnote" data-delay style={{ '--reveal-delay': '240ms' }}>
