@@ -1,7 +1,15 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import CookieConsent from './components/CookieConsent.jsx'
+import LegalModal from './components/LegalModal.jsx'
+import SignatureWidget from './components/SignatureWidget.tsx'
+import CookieConsent from './components/CookieConsent.jsx'
+import LegalOverlay from './components/LegalOverlay.jsx'
+import { personalDataConsentSections, privacyPolicySections } from './data/legal.js'
 import {
   applyEarlyPageScrollReset,
+  finishScrollInitWithoutLenis,
   hasScrollHash,
+  markLenisReady,
   resetPageScrollUnlessHash,
   scrollToHashIfPresent,
   syncLenisToTop,
@@ -18,7 +26,24 @@ import {
 
 const BOOK_VK = salon.booking
 const BOOK_TG = salon.telegram
+const BOOK_MAX = salon.max
 const BOOK_PHONE = salon.phones[0].href
+
+function MessengerLinks({ className = 'block-link' }) {
+  return (
+    <>
+      <a className={className} href={salon.vk} target="_blank" rel="noreferrer">
+        ВКонтакте — запись
+      </a>
+      <a className={className} href={salon.telegram} target="_blank" rel="noreferrer">
+        Telegram
+      </a>
+      <a className={className} href={salon.max.phone} title={salon.max.display}>
+        MAX {salon.max.display}
+      </a>
+    </>
+  )
+}
 
 /** Respect Vite `base` (e.g. `/UNO/` on GitHub Pages). */
 function asset(path) {
@@ -63,6 +88,12 @@ function useInitialScroll() {
     const afterPaint = () => resetPageScrollUnlessHash()
     requestAnimationFrame(afterPaint)
     requestAnimationFrame(() => requestAnimationFrame(afterPaint))
+
+    const desktop = window.matchMedia('(min-width: 960px)')
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (!desktop.matches || reduce.matches) {
+      requestAnimationFrame(() => finishScrollInitWithoutLenis())
+    }
 
     return undefined
   }, [])
@@ -114,13 +145,11 @@ function useLenis() {
     const mqDesktop = window.matchMedia('(min-width: 960px)')
     let lenis = null
     let rafId = 0
-    let syncFrames = 0
     let cancelled = false
 
     const teardown = () => {
       if (rafId) cancelAnimationFrame(rafId)
       rafId = 0
-      syncFrames = 0
       if (lenis) {
         lenis.destroy()
         lenis = null
@@ -140,19 +169,28 @@ function useLenis() {
       ])
       if (cancelled) return
 
+      if (!hasScrollHash()) resetPageScrollUnlessHash()
+
       lenis = new Lenis({
         duration: 1.05,
         smoothWheel: true,
         touchMultiplier: 1.4,
+        stopInertiaOnNavigate: true,
       })
       document.documentElement.classList.add('lenis-active')
       syncLenisToTop(lenis)
 
+      let stableFrames = 0
+      let scrollSynced = false
       const raf = (time) => {
         lenis?.raf(time)
-        if (!hasScrollHash() && syncFrames < 12) {
-          syncLenisToTop(lenis)
-          syncFrames += 1
+        if (!scrollSynced && !hasScrollHash()) {
+          const atTop = syncLenisToTop(lenis)
+          stableFrames = atTop ? stableFrames + 1 : 0
+          if (stableFrames >= 8) {
+            scrollSynced = true
+            markLenisReady()
+          }
         }
         rafId = requestAnimationFrame(raf)
       }
@@ -352,6 +390,12 @@ function Header({ menuOpen, setMenuOpen }) {
           <a className="btn btn-secondary" href={BOOK_TG} target="_blank" rel="noreferrer">
             Telegram
           </a>
+          <a className="btn btn-secondary" href={BOOK_MAX}>
+            MAX
+          </a>
+          <a className="btn btn-secondary" href={salon.max.phone}>
+            MAX
+          </a>
         </div>
       </div>
     </header>
@@ -360,6 +404,7 @@ function Header({ menuOpen, setMenuOpen }) {
 
 function Hero() {
   const videoRef = useRef(null)
+  const heroRef = useRef(null)
   const [ready, setReady] = useState(false)
   const [videoLoaded, setVideoLoaded] = useState(false)
   const [videoSrc, setVideoSrc] = useState(null)
@@ -409,7 +454,7 @@ function Hero() {
   }, [videoSrc])
 
   return (
-    <section className={`hero${ready ? ' is-ready' : ''}`} id="top">
+    <section className={`hero${ready ? ' is-ready' : ''}`} id="top" ref={heroRef}>
       <div
         className={`hero-media${videoLoaded ? ' is-video-ready' : ''}`}
         aria-hidden="true"
@@ -438,39 +483,45 @@ function Hero() {
         <div className="hero-depth" />
         <div className="hero-grain" />
       </div>
+      <SignatureWidget heroRef={heroRef} />
       <div className="container hero-stage">
         <div className="hero-content">
           <p className="hero-loc hero-enter" data-hero-step="0">
-            Саратов · {salon.addressShort}
+            Салон красоты · Саратов
           </p>
           <h1>
             <span className="h1-brand hero-enter" data-hero-step="1">
               УНО
             </span>
             <span className="h1-sub hero-enter" data-hero-step="2">
-              {salon.slogan}
+              Управление новыми <em>образами</em>
             </span>
           </h1>
           <p className="lead hero-enter" data-hero-step="3">
-            Полный цикл услуг в одном салоне.
+            От точного штриха до цельного образа — полный цикл beauty-услуг в одном месте.
           </p>
           <div className="hero-cta hero-enter" data-hero-step="4">
             <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
-              Записаться
+              <span>Записаться</span>
+              <span className="hero-cta-arrow" aria-hidden="true">↗</span>
             </a>
             <a className="text-link text-link-on-dark" href="#services">
               Услуги и цены
             </a>
           </div>
-          <p className="hero-meta hero-enter" data-hero-step="5">
+        </div>
+        <div className="hero-rail hero-enter" data-hero-step="5">
+          <p className="hero-rail-services">Волосы <span /> Ногти <span /> Лицо <span /> Тело</p>
+          <p className="hero-meta">
+            {salon.addressShort}<br />
             {salon.hours}
-            <span className="hero-meta-sep" aria-hidden="true">
-              ·
-            </span>
-            {salon.hoursNote}
           </p>
         </div>
       </div>
+      <a className="hero-scroll-cue hero-enter" data-hero-step="5" href="#booking" aria-label="Прокрутить к записи">
+        <span>Смотреть</span>
+        <i aria-hidden="true" />
+      </a>
     </section>
   )
 }
@@ -508,8 +559,13 @@ function BookingSteps() {
           Готовы записаться?{' '}
           <a href={BOOK_VK} target="_blank" rel="noreferrer">
             Напишите в VK
+          </a>
+          ,{' '}
+          <a href={BOOK_TG} target="_blank" rel="noreferrer">
+            Telegram
           </a>{' '}
           или{' '}
+          <a href={BOOK_MAX}>MAX</a> — либо{' '}
           <a href={BOOK_PHONE}>позвоните администратору</a>.
         </p>
       </div>
@@ -694,9 +750,11 @@ function About() {
             <a className="text-link" href="#contacts">
               Контакты и запись
             </a>
-            <a className="text-link" href={BOOK_PHONE}>
-              {salon.phones[0].display}
-            </a>
+            {salon.phones.map((phone) => (
+              <a key={phone.href} className="text-link" href={phone.href}>
+                {phone.display}
+              </a>
+            ))}
           </div>
         </div>
       </div>
@@ -806,7 +864,8 @@ function Contacts() {
           <p className="section-kicker">Связь</p>
           <h2>Контакты и запись</h2>
           <p className="lead-sm">
-            Напишите в VK — основной канал записи. Можно позвонить или написать в Telegram.
+            Напишите в VK — основной канал записи. Также Telegram, MAX или звонок на любой из
+            телефонов салона.
           </p>
           <dl className="contact-list">
             <div>
@@ -838,12 +897,7 @@ function Contacts() {
             <div>
               <dt>Мессенджеры</dt>
               <dd>
-                <a className="block-link" href={salon.vk} target="_blank" rel="noreferrer">
-                  ВКонтакте — запись
-                </a>
-                <a className="block-link" href={salon.telegram} target="_blank" rel="noreferrer">
-                  Telegram
-                </a>
+                <MessengerLinks />
               </dd>
             </div>
           </dl>
@@ -870,15 +924,15 @@ function Contacts() {
   )
 }
 
-function Footer() {
+function Footer({ onPrivacy, onConsent }) {
   const year = new Date().getFullYear()
   return (
     <footer className="site-footer">
       <div className="container footer-inner">
         <div className="footer-brand">
           <img
-            src={asset('images/logo-mark.webp')}
-            alt="UNO — салон красоты"
+            src={asset('images/logo-uno.webp')}
+            alt="УНО — салон красоты"
             width="96"
             height="40"
             loading="lazy"
@@ -896,7 +950,18 @@ function Footer() {
           <a href={salon.telegram} target="_blank" rel="noreferrer">
             Telegram
           </a>
-          <a href={BOOK_PHONE}>{salon.phones[0].display}</a>
+          <a href={salon.max.phone}>MAX {salon.max.display}</a>
+          {salon.phones.map((ph) => (
+            <a key={ph.href} href={ph.href}>
+              {ph.display}
+            </a>
+          ))}
+          <button type="button" className="footer-legal-link" onClick={onPrivacy}>
+            Политика конфиденциальности
+          </button>
+          <button type="button" className="footer-legal-link" onClick={onConsent}>
+            Согласие на обработку ПДн
+          </button>
         </div>
         <p className="footer-note">
           © {year} УНО · Саратов
@@ -928,6 +993,7 @@ function StickyCta({ visible }) {
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [legalView, setLegalView] = useState(null)
   const [serviceTabId, setServiceTabId] = useState(serviceTabs[0].id)
   const pastHero = usePastHero()
   useInitialScroll()
@@ -956,7 +1022,23 @@ export default function App() {
         <Gallery />
         <Contacts />
       </main>
-      <Footer />
+      <Footer
+        onPrivacy={() => setLegalView('privacy')}
+        onConsent={() => setLegalView('consent')}
+      />
+      <CookieConsent onOpenPrivacy={() => setLegalView('privacy')} />
+      <LegalOverlay
+        open={legalView === 'privacy'}
+        title="Политика конфиденциальности"
+        sections={privacyPolicySections}
+        onClose={() => setLegalView(null)}
+      />
+      <LegalOverlay
+        open={legalView === 'consent'}
+        title="Согласие на обработку персональных данных"
+        sections={personalDataConsentSections}
+        onClose={() => setLegalView(null)}
+      />
       <StickyCta visible={pastHero} />
     </>
   )

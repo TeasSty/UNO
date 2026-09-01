@@ -1,3 +1,4 @@
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
@@ -5,6 +6,6 @@ import { defineConfig } from 'vite'
 const base = process.env.VITE_BASE || (process.env.GITHUB_PAGES === 'true' ? '/UNO/' : '/')
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   base,
 })
