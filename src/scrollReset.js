@@ -37,8 +37,10 @@ let stableTopFrames = 0
 let lenisScrollGuard = null
 let guardRafId = 0
 let lastSoftGuardY = 0
+let lastObservedScrollY = 0
 /** Set after wheel/touch/keyboard scroll — stops guards from fighting user scroll. */
 let userHasScrolledDown = false
+let earlyResetDone = false
 
 export function disableScrollRestoration() {
   if ('scrollRestoration' in history) {
@@ -119,9 +121,16 @@ function onUserScrollIntent() {
   releaseOverflowLock()
 }
 
+function noteIncrementalUserScroll(y) {
+  if (y <= 0) return
+  const delta = Math.abs(y - lastObservedScrollY)
+  // Restoration jumps hundreds of px in one tick; user scroll is gradual.
+  if (delta > 0 && delta < 140) onUserScrollIntent()
+  lastObservedScrollY = y
+}
+
 function forceTopUnlessUserScrolling() {
-  if (userScrollIntentActive()) return
-  if (userHasScrolledDown) {
+  if (userScrollIntentActive() || userHasScrolledDown) {
     lastSoftGuardY = window.scrollY
     return
   }
@@ -176,7 +185,7 @@ function maybeStopScrollGuards() {
 
 export function syncLenisToTop(lenis) {
   if (!lenis || hasScrollHash()) return false
-  if (userScrollIntentActive() && window.scrollY > 1) return false
+  if (userScrollIntentActive() || userHasScrolledDown) return false
   resetPageScrollUnlessHash()
   lenis.scrollTo(0, { immediate: true, force: true })
   return window.scrollY <= 1 && lenis.scroll <= 1
@@ -213,6 +222,7 @@ function beginRestoreGuards() {
   userHasScrolledDown = false
   pageLoadTime = performance.now()
   lastSoftGuardY = 0
+  lastObservedScrollY = window.scrollY
   startGuardLoop()
 }
 
@@ -231,6 +241,8 @@ function onPageShow(event) {
 
   userHasScrolledDown = false
   lastSoftGuardY = 0
+  lastObservedScrollY = 0
+  if (!earlyResetDone) return
   beginRestoreGuards()
 }
 
@@ -241,6 +253,7 @@ function installScrollGuards() {
   window.addEventListener('pageshow', onPageShow)
   window.addEventListener('wheel', onUserScrollIntent, { passive: true })
   window.addEventListener('touchstart', onUserScrollIntent, { passive: true })
+  window.addEventListener('pointerdown', onUserScrollIntent, { passive: true })
   window.addEventListener('keydown', (event) => {
     if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(event.key)) {
       onUserScrollIntent()
@@ -248,7 +261,10 @@ function installScrollGuards() {
   })
 
   window.addEventListener('scroll', () => {
-    if (!hasScrollHash()) forceTopUnlessUserScrolling()
+    if (hasScrollHash()) return
+    const y = window.scrollY
+    noteIncrementalUserScroll(y)
+    forceTopUnlessUserScrolling()
   }, { passive: true })
 
   window.setInterval(() => {
@@ -266,6 +282,12 @@ function installScrollGuards() {
 
 export function applyEarlyPageScrollReset() {
   disableScrollRestoration()
+  if (earlyResetDone) {
+    reassertScrollTopUnlessHash()
+    return
+  }
+  earlyResetDone = true
+
   lockScrollInit()
   resetPageScrollUnlessHash()
   requestAnimationFrame(resetPageScrollUnlessHash)
@@ -288,6 +310,7 @@ export function applyEarlyPageScrollReset() {
         window.setTimeout(reassertScrollTopUnlessHash, 120)
         window.setTimeout(reassertScrollTopUnlessHash, 500)
         window.setTimeout(reassertScrollTopUnlessHash, 1500)
+        window.setTimeout(reassertScrollTopUnlessHash, 3000)
       },
       { once: true },
     )

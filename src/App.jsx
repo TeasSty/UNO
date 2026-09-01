@@ -874,77 +874,15 @@ function Gallery() {
 }
 
 function Contacts() {
-  const mapWrapRef = useRef(null)
   const [mapReady, setMapReady] = useState(() => hasContactsHash())
 
   const loadMap = () => setMapReady(true)
-
-  useEffect(() => {
-    if (mapReady || hasContactsHash()) return undefined
-
-    const target = mapWrapRef.current
-    if (!target) return undefined
-
-    let userEngaged = false
-    const markEngaged = () => {
-      userEngaged = true
-    }
-
-    window.addEventListener('wheel', markEngaged, { passive: true })
-    window.addEventListener('touchstart', markEngaged, { passive: true })
-    window.addEventListener('keydown', markEngaged)
-
-    if (typeof IntersectionObserver === 'undefined') {
-      return () => {
-        window.removeEventListener('wheel', markEngaged)
-        window.removeEventListener('touchstart', markEngaged)
-        window.removeEventListener('keydown', markEngaged)
-      }
-    }
-
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (!userEngaged) return
-        if (entries.some((entry) => entry.isIntersecting)) {
-          loadMap()
-          io.disconnect()
-        }
-      },
-      { root: null, rootMargin: '96px 0px', threshold: 0.05 },
-    )
-    io.observe(target)
-
-    return () => {
-      io.disconnect()
-      window.removeEventListener('wheel', markEngaged)
-      window.removeEventListener('touchstart', markEngaged)
-      window.removeEventListener('keydown', markEngaged)
-    }
-  }, [mapReady])
-
-  useEffect(() => {
-    if (!mapReady || hasScrollHash()) return undefined
-
-    reassertScrollTopUnlessHash()
-    const rafId = requestAnimationFrame(reassertScrollTopUnlessHash)
-    const t0 = window.setTimeout(reassertScrollTopUnlessHash, 0)
-    const t1 = window.setTimeout(reassertScrollTopUnlessHash, 120)
-    const t2 = window.setTimeout(reassertScrollTopUnlessHash, 400)
-
-    return () => {
-      cancelAnimationFrame(rafId)
-      window.clearTimeout(t0)
-      window.clearTimeout(t1)
-      window.clearTimeout(t2)
-    }
-  }, [mapReady])
 
   const handleMapLoad = () => {
     reassertScrollTopUnlessHash()
     requestAnimationFrame(reassertScrollTopUnlessHash)
     window.setTimeout(reassertScrollTopUnlessHash, 0)
     window.setTimeout(reassertScrollTopUnlessHash, 150)
-    window.setTimeout(reassertScrollTopUnlessHash, 600)
   }
 
   return (
@@ -1002,7 +940,6 @@ function Contacts() {
         </div>
         <div
           className="map-wrap"
-          ref={mapWrapRef}
           data-delay
           style={{ '--reveal-delay': '120ms' }}
         >
