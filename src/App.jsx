@@ -1,16 +1,9 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import CookieConsent from './components/CookieConsent.jsx'
 import {
-  applyEarlyPageScrollReset,
-  finishScrollInitWithoutLenis,
   hasContactsHash,
   hasScrollHash,
-  markLenisReady,
-  registerLenisScrollGuards,
-  reassertScrollTopUnlessHash,
-  resetPageScrollUnlessHash,
   scrollToHashIfPresent,
-  syncLenisToTop,
 } from './scrollReset.js'
 import {
   aboutFacts,
@@ -85,28 +78,7 @@ function useInitialScroll() {
   useLayoutEffect(() => {
     if (hasScrollHash()) {
       scrollToHashIfPresent(!prefersReducedMotion())
-      return
     }
-
-    applyEarlyPageScrollReset()
-  }, [])
-
-  useLayoutEffect(() => {
-    if (hasScrollHash()) return undefined
-
-    const afterPaint = () => reassertScrollTopUnlessHash()
-    requestAnimationFrame(afterPaint)
-    requestAnimationFrame(() => requestAnimationFrame(afterPaint))
-    window.setTimeout(reassertScrollTopUnlessHash, 0)
-    window.setTimeout(reassertScrollTopUnlessHash, 200)
-
-    const desktop = window.matchMedia('(min-width: 960px)')
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (!desktop.matches || reduce.matches) {
-      requestAnimationFrame(() => finishScrollInitWithoutLenis())
-    }
-
-    return undefined
   }, [])
 }
 
@@ -142,85 +114,6 @@ function usePastHero() {
     }
   }, [])
   return pastHero
-}
-
-/** Lenis on desktop only; destroyed when reduced-motion is on. */
-function useLenis() {
-  useLayoutEffect(() => {
-    if (hasScrollHash()) return
-    resetPageScrollUnlessHash()
-  }, [])
-
-  useEffect(() => {
-    const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const mqDesktop = window.matchMedia('(min-width: 960px)')
-    let lenis = null
-    let rafId = 0
-    let cancelled = false
-
-    const teardown = () => {
-      if (rafId) cancelAnimationFrame(rafId)
-      rafId = 0
-      if (lenis) {
-        lenis.destroy()
-        lenis = null
-      }
-      registerLenisScrollGuards(null)
-      document.documentElement.classList.remove('lenis-active')
-    }
-
-    const setup = async () => {
-      teardown()
-      if (mqReduce.matches || !mqDesktop.matches) return
-
-      if (!hasScrollHash()) resetPageScrollUnlessHash()
-
-      const [{ default: Lenis }] = await Promise.all([
-        import('lenis'),
-        import('lenis/dist/lenis.css'),
-      ])
-      if (cancelled) return
-
-      if (!hasScrollHash()) resetPageScrollUnlessHash()
-
-      lenis = new Lenis({
-        lerp: 0.09,
-        smoothWheel: true,
-        wheelMultiplier: 0.82,
-        touchMultiplier: 1.15,
-        stopInertiaOnNavigate: true,
-      })
-      document.documentElement.classList.add('lenis-active')
-      registerLenisScrollGuards(lenis)
-      syncLenisToTop(lenis)
-
-      let stableFrames = 0
-      let scrollSynced = false
-      const raf = (time) => {
-        lenis?.raf(time)
-        if (!scrollSynced && !hasScrollHash()) {
-          const atTop = syncLenisToTop(lenis)
-          stableFrames = atTop ? stableFrames + 1 : 0
-          if (stableFrames >= 3) {
-            scrollSynced = true
-            markLenisReady()
-          }
-        }
-        rafId = requestAnimationFrame(raf)
-      }
-      rafId = requestAnimationFrame(raf)
-    }
-
-    setup()
-    mqReduce.addEventListener('change', setup)
-    mqDesktop.addEventListener('change', setup)
-    return () => {
-      cancelled = true
-      mqReduce.removeEventListener('change', setup)
-      mqDesktop.removeEventListener('change', setup)
-      teardown()
-    }
-  }, [])
 }
 
 function useReveal() {
@@ -878,13 +771,6 @@ function Contacts() {
 
   const loadMap = () => setMapReady(true)
 
-  const handleMapLoad = () => {
-    reassertScrollTopUnlessHash()
-    requestAnimationFrame(reassertScrollTopUnlessHash)
-    window.setTimeout(reassertScrollTopUnlessHash, 0)
-    window.setTimeout(reassertScrollTopUnlessHash, 150)
-  }
-
   return (
     <section className="section section-alt" id="contacts" data-reveal>
       <div className="container contacts-grid">
@@ -951,7 +837,6 @@ function Contacts() {
               tabIndex={-1}
               referrerPolicy="no-referrer-when-downgrade"
               allowFullScreen
-              onLoad={handleMapLoad}
             />
           ) : (
             <button
@@ -1055,7 +940,6 @@ export default function App() {
   const pastHero = usePastHero()
   useInitialScroll()
   useReveal()
-  useLenis()
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''

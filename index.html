@@ -6,15 +6,6 @@
     <link rel="icon" type="image/png" href="images/favicon-96.png" sizes="96x96" />
     <link rel="apple-touch-icon" href="images/favicon-96.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style id="scroll-init-style">
-      html.scroll-init-lock,
-      html.scroll-init-lock body {
-        overflow-anchor: none !important;
-      }
-      html.scroll-init-lock {
-        scroll-behavior: auto !important;
-      }
-    </style>
     <script>
       ;(function () {
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
@@ -24,7 +15,6 @@
         }
         function toTop() {
           if (hasAnchor()) return
-          document.documentElement.classList.add('scroll-init-lock')
           window.scrollTo(0, 0)
           document.documentElement.scrollTop = 0
           if (document.body) document.body.scrollTop = 0

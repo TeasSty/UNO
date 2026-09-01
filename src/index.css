@@ -42,14 +42,6 @@ html {
   overflow-anchor: none;
 }
 
-html.scroll-smooth-ready:not(.scroll-init-lock) {
-  scroll-behavior: smooth;
-}
-
-html.lenis-active {
-  scroll-behavior: auto;
-}
-
 body {
   margin: 0;
   min-width: 320px;
