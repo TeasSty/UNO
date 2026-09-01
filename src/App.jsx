@@ -1,15 +1,14 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import CookieConsent from './components/CookieConsent.jsx'
-import LegalModal from './components/LegalModal.jsx'
-import SignatureWidget from './components/SignatureWidget.tsx'
-import CookieConsent from './components/CookieConsent.jsx'
 import LegalOverlay from './components/LegalOverlay.jsx'
+import SignatureWidget from './components/SignatureWidget.tsx'
 import { personalDataConsentSections, privacyPolicySections } from './data/legal.js'
 import {
   applyEarlyPageScrollReset,
   finishScrollInitWithoutLenis,
   hasScrollHash,
   markLenisReady,
+  registerLenisScrollGuards,
   resetPageScrollUnlessHash,
   scrollToHashIfPresent,
   syncLenisToTop,
@@ -154,6 +153,7 @@ function useLenis() {
         lenis.destroy()
         lenis = null
       }
+      registerLenisScrollGuards(null)
       document.documentElement.classList.remove('lenis-active')
     }
 
@@ -178,6 +178,7 @@ function useLenis() {
         stopInertiaOnNavigate: true,
       })
       document.documentElement.classList.add('lenis-active')
+      registerLenisScrollGuards(lenis)
       syncLenisToTop(lenis)
 
       let stableFrames = 0
