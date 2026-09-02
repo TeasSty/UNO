@@ -23,9 +23,9 @@ VK community: https://vk.com/uno.saratov64 (public id `211216090`)
 - Real-ESRGAN skipped for install weight; Pillow was enough for web sizes.
 
 ## Video
-- VK clip `clip-211216090_456246067` downloaded via yt-dlp → `public/video/uno-clip.mp4` (720p, muted, ~2.5 MB).
-- Poster: `public/video/uno-clip-poster.webp` (square crop of an early bright frame).
-- Hero shows muted autoplay loop in a circular frame.
+- Hero clip from Elena → `public/video/hero.mp4` (1440×2560 portrait, H.264 CRF 22, muted, ~5.9 MB).
+- Poster: `public/video/hero-poster.webp` (frame at 1.5s, quality 88).
+- Desktop: full-bleed `object-fit: cover` with right-weighted crop; mobile: poster-first (video hidden).
 
 ## Gallery curation
 - Removed process/cape shots that hurt premium feel: former `work-09` (wet hair + plastic cape + sparkles), `work-10` (cape + clippings), `work-17` (cape, back view).

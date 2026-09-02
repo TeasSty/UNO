@@ -311,10 +311,10 @@ export const galleryItems = [
   { src: 'images/work-08.webp', alt: 'Светлый маникюр с хлопьями', cat: 'nails' },
 ]
 
-/** Local VK clip — full-bleed muted loop behind the hero. */
+/** Salon atmosphere clip — full-bleed muted loop behind the hero. */
 export const heroClip = {
-  src: 'video/uno-clip.mp4',
-  poster: 'video/uno-clip-poster.webp',
+  src: 'video/hero.mp4',
+  poster: 'video/hero-poster.webp',
   label: 'Атмосфера салона УНО',
 }
 

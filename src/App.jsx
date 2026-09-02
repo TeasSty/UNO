@@ -376,8 +376,8 @@ function Hero() {
           className="hero-poster-fallback"
           src={asset(heroClip.poster)}
           alt=""
-          width="1920"
-          height="1080"
+          width="1440"
+          height="2560"
           decoding="async"
           fetchPriority="high"
         />
