@@ -324,22 +324,26 @@ function Hero() {
 
   useEffect(() => {
     const reduce = prefersReducedMotion()
-    const mobile = window.matchMedia('(max-width: 719px)')
     const id = requestAnimationFrame(() => setReady(true))
 
-    if (reduce || mobile.matches) {
+    if (reduce) {
       return () => cancelAnimationFrame(id)
     }
 
     const clipSrc = asset(heroClip.src)
+    const mobile = window.matchMedia('(max-width: 719px)').matches
     const attachVideo = () => setVideoSrc(clipSrc)
     let idleId = 0
     let timeoutId = 0
 
-    if ('requestIdleCallback' in window) {
-      idleId = window.requestIdleCallback(attachVideo, { timeout: 2500 })
+    // Phones: attach immediately so muted autoplay + playsinline can start.
+    // Desktop: idle-defer so the poster stays the LCP image.
+    if (mobile) {
+      attachVideo()
+    } else if ('requestIdleCallback' in window) {
+      idleId = window.requestIdleCallback(attachVideo, { timeout: 1800 })
     } else {
-      timeoutId = window.setTimeout(attachVideo, 900)
+      timeoutId = window.setTimeout(attachVideo, 400)
     }
 
     return () => {
@@ -354,16 +358,35 @@ function Hero() {
     const el = videoRef.current
     if (!el || !videoSrc || reduce) return undefined
 
-    const onLoaded = () => {
-      setVideoLoaded(true)
-      el.play().catch(() => {})
+    el.muted = true
+    el.defaultMuted = true
+    el.playsInline = true
+    el.setAttribute('playsinline', '')
+    el.setAttribute('webkit-playsinline', '')
+    el.setAttribute('muted', '')
+
+    const tryPlay = () => {
+      const play = el.play()
+      if (play && typeof play.then === 'function') {
+        play.then(() => setVideoLoaded(true)).catch(() => {})
+      } else if (!el.paused) {
+        setVideoLoaded(true)
+      }
     }
 
-    el.muted = true
-    if (el.readyState >= 2) onLoaded()
-    else el.addEventListener('loadeddata', onLoaded)
-    el.play().catch(() => {})
-    return () => el.removeEventListener('loadeddata', onLoaded)
+    const onReady = () => {
+      tryPlay()
+    }
+
+    if (el.readyState >= 2) onReady()
+    else el.addEventListener('loadeddata', onReady)
+    el.addEventListener('canplay', tryPlay)
+    tryPlay()
+
+    return () => {
+      el.removeEventListener('loadeddata', onReady)
+      el.removeEventListener('canplay', tryPlay)
+    }
   }, [videoSrc])
 
   return (
@@ -376,8 +399,8 @@ function Hero() {
           className="hero-poster-fallback"
           src={asset(heroClip.poster)}
           alt=""
-          width="1440"
-          height="2560"
+          width="1080"
+          height="1920"
           decoding="async"
           fetchPriority="high"
         />
@@ -390,7 +413,8 @@ function Hero() {
           loop
           playsInline
           autoPlay={Boolean(videoSrc)}
-          preload="none"
+          preload={videoSrc ? 'metadata' : 'none'}
+          disablePictureInPicture
         />
         <div className="hero-veil" />
         <div className="hero-depth" />
