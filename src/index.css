@@ -517,7 +517,7 @@ button {
   color: var(--brand);
 }
 
-/* Hero — editorial salon film; mobile full-bleed, desktop ambient+frame */
+/* Hero — bright salon interior; mobile full-bleed, desktop ambient+full bleed */
 .hero {
   position: relative;
   isolation: isolate;
@@ -526,7 +526,7 @@ button {
   display: flex;
   align-items: flex-end;
   padding-top: var(--header-h);
-  background: #2a2420;
+  background: #d8e4ef;
 }
 
 .hero::after {
@@ -545,11 +545,11 @@ button {
   inset: 0;
   z-index: -1;
   overflow: hidden;
-  background: #2a2420;
+  background: #d8e4ef;
   pointer-events: none;
 }
 
-/* Blurred full-bleed atmosphere — desktop only (poster, no second video) */
+/* Blurred full-bleed atmosphere — desktop only */
 .hero-ambient {
   display: none;
   position: absolute;
@@ -558,14 +558,14 @@ button {
   height: 116%;
   max-width: none;
   object-fit: cover;
-  object-position: 50% 40%;
-  filter: blur(34px) brightness(0.9) saturate(1.05);
+  object-position: 50% 42%;
+  filter: blur(34px) brightness(1.02) saturate(1.08);
   transform: scale(1.08);
   pointer-events: none;
   user-select: none;
 }
 
-/* Sharp media host: full-bleed on mobile, portrait panel on desktop */
+/* Sharp media host: full-bleed landscape interior */
 .hero-frame {
   position: absolute;
   inset: 0;
@@ -573,53 +573,26 @@ button {
   z-index: 1;
 }
 
-.hero-video {
+.hero-photo {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 38%;
-  display: block;
-  opacity: 0;
-  transform: none;
-  transition: opacity 1.4s ease;
-  pointer-events: none;
-  filter: brightness(1.12) contrast(1.02) saturate(1.06);
-}
-
-.hero-video.is-loaded {
-  opacity: 1;
-  animation: none;
-  transform: none;
-}
-
-.hero-poster-fallback {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 38%;
+  object-position: 50% 42%;
   display: block;
   transform: scale(1.02);
-  animation: hero-poster-kenburns 28s var(--ease-premium) infinite alternate;
-  transition: opacity 1.4s ease;
+  animation: hero-photo-kenburns 28s var(--ease-premium) infinite alternate;
   pointer-events: none;
-  filter: brightness(1.12) contrast(1.02) saturate(1.06);
+  filter: brightness(1.04) contrast(1.02) saturate(1.05);
 }
 
-.hero-media.is-video-ready .hero-poster-fallback {
-  opacity: 0;
-  pointer-events: none;
-}
-
-@keyframes hero-poster-kenburns {
+@keyframes hero-photo-kenburns {
   from {
     transform: scale(1.02);
   }
   to {
-    transform: scale(1.08);
+    transform: scale(1.07);
   }
 }
 
@@ -628,7 +601,7 @@ button {
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  opacity: 0.03;
+  opacity: 0.018;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
 }
@@ -640,32 +613,32 @@ button {
   background:
     linear-gradient(
       180deg,
-      rgba(20, 18, 16, 0.22) 0%,
-      rgba(20, 18, 16, 0.02) 34%,
-      rgba(20, 18, 16, 0.14) 58%,
-      rgba(20, 18, 16, 0.62) 100%
+      rgba(20, 18, 16, 0.12) 0%,
+      rgba(20, 18, 16, 0.01) 34%,
+      rgba(20, 18, 16, 0.08) 58%,
+      rgba(20, 18, 16, 0.42) 100%
     ),
     linear-gradient(
       100deg,
-      rgba(20, 18, 16, 0.72) 0%,
-      rgba(20, 18, 16, 0.48) 26%,
-      rgba(20, 18, 16, 0.2) 48%,
-      rgba(20, 18, 16, 0.06) 70%,
+      rgba(20, 18, 16, 0.52) 0%,
+      rgba(20, 18, 16, 0.28) 26%,
+      rgba(20, 18, 16, 0.1) 48%,
+      rgba(20, 18, 16, 0.02) 70%,
       transparent 86%
     );
   pointer-events: none;
 }
 
-/* Soft text-side shade — CSS-only, no heavy vignette */
+/* Soft text-side shade — lighter on bright interior */
 .hero-depth {
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 52% 48% at 68% 40%, transparent 42%, rgba(20, 18, 16, 0.22) 100%),
-    radial-gradient(ellipse 46% 36% at 78% 18%, rgba(184, 28, 34, 0.08), transparent 72%);
-  opacity: 0.65;
+    radial-gradient(ellipse 52% 48% at 68% 40%, transparent 42%, rgba(20, 18, 16, 0.12) 100%),
+    radial-gradient(ellipse 46% 36% at 78% 18%, rgba(184, 28, 34, 0.06), transparent 72%);
+  opacity: 0.45;
   animation: hero-vignette 16s ease-in-out infinite alternate;
 }
 
@@ -1875,21 +1848,16 @@ button {
     min-height: max(720px, 100svh);
   }
 
-  .hero-video,
-  .hero-poster-fallback {
+  .hero-photo {
     object-fit: cover;
-    object-position: 50% 36%;
-    transform: none;
-  }
-
-  .hero-video.is-loaded {
+    object-position: 50% 40%;
     transform: none;
   }
 
   .hero-veil {
     background:
-      linear-gradient(180deg, rgba(20, 18, 16, 0.18) 0%, rgba(20, 18, 16, 0.01) 30%, rgba(20, 18, 16, 0.28) 56%, rgba(20, 18, 16, 0.68) 100%),
-      linear-gradient(90deg, rgba(20, 18, 16, 0.28), transparent 74%);
+      linear-gradient(180deg, rgba(20, 18, 16, 0.1) 0%, rgba(20, 18, 16, 0.01) 30%, rgba(20, 18, 16, 0.18) 56%, rgba(20, 18, 16, 0.52) 100%),
+      linear-gradient(90deg, rgba(20, 18, 16, 0.2), transparent 74%);
   }
 
   .hero-stage {
@@ -2149,64 +2117,52 @@ button {
     display: flex;
   }
 
-  /* Ambient blur fill + sharp portrait frame */
+  /* Ambient blur fill + full-bleed landscape interior */
   .hero-ambient {
     display: block;
   }
 
   .hero-frame {
-    inset: auto;
-    top: 50%;
-    right: max(1.5rem, calc((100vw - 1220px) / 2 + 0.25rem));
-    width: min(46vw, 440px);
-    height: min(78vh, 820px);
-    max-height: calc(100svh - var(--header-h) - 2.5rem);
-    transform: translateY(-46%);
-    border-radius: 3px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    box-shadow:
-      0 28px 64px rgba(12, 11, 10, 0.38),
-      0 0 0 1px rgba(20, 18, 16, 0.12);
+    inset: 0;
+    transform: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
 
-  .hero-video,
-  .hero-poster-fallback {
+  .hero-photo {
     object-fit: cover;
-    object-position: 50% 36%;
+    object-position: 50% 40%;
     transform: none;
     animation: none;
-    filter: brightness(1.1) contrast(1.02) saturate(1.05);
+    filter: brightness(1.03) contrast(1.02) saturate(1.04);
   }
 
-  .hero-video.is-loaded {
-    transform: none;
-  }
-
-  /* Lighter text-side veil — ambient atmosphere shows through */
+  /* Lighter text-side veil — bright interior shows through */
   .hero-veil {
     background:
       linear-gradient(
         180deg,
-        rgba(20, 18, 16, 0.28) 0%,
-        rgba(20, 18, 16, 0.06) 28%,
-        rgba(20, 18, 16, 0.1) 62%,
-        rgba(20, 18, 16, 0.42) 100%
+        rgba(20, 18, 16, 0.14) 0%,
+        rgba(20, 18, 16, 0.02) 28%,
+        rgba(20, 18, 16, 0.06) 62%,
+        rgba(20, 18, 16, 0.32) 100%
       ),
       linear-gradient(
         100deg,
-        rgba(20, 18, 16, 0.55) 0%,
-        rgba(20, 18, 16, 0.32) 28%,
-        rgba(20, 18, 16, 0.12) 52%,
-        rgba(20, 18, 16, 0.02) 72%,
+        rgba(20, 18, 16, 0.42) 0%,
+        rgba(20, 18, 16, 0.22) 28%,
+        rgba(20, 18, 16, 0.08) 52%,
+        rgba(20, 18, 16, 0.01) 72%,
         transparent 88%
       );
   }
 
   .hero-depth {
     background:
-      radial-gradient(ellipse 48% 52% at 22% 58%, rgba(20, 18, 16, 0.28), transparent 70%),
-      radial-gradient(ellipse 40% 34% at 78% 18%, rgba(184, 28, 34, 0.06), transparent 72%);
-    opacity: 0.55;
+      radial-gradient(ellipse 48% 52% at 22% 58%, rgba(20, 18, 16, 0.18), transparent 70%),
+      radial-gradient(ellipse 40% 34% at 78% 18%, rgba(184, 28, 34, 0.05), transparent 72%);
+    opacity: 0.4;
   }
 
   .hero-stage {
@@ -2298,11 +2254,6 @@ button {
 }
 
 @media (min-width: 1200px) {
-  .hero-frame {
-    width: min(44vw, 460px);
-    right: max(2rem, calc((100vw - 1220px) / 2 + 0.5rem));
-  }
-
   .hero-stage {
     grid-template-columns: minmax(0, 1fr) minmax(16rem, 26vw);
     gap: 4rem;
@@ -2334,7 +2285,7 @@ button {
   .price-acc-body,
   .price-acc-chevron,
   .hero-enter,
-  .hero-video,
+  .hero-photo,
   .hero-depth,
   [data-reveal],
   [data-reveal] [data-delay],
@@ -2349,26 +2300,14 @@ button {
     transform: none;
   }
 
-  .hero-video,
-  .hero-video.is-loaded {
-    display: none !important;
-    opacity: 0;
-    animation: none;
-  }
-
-  .hero-ambient {
-    filter: blur(28px) brightness(0.92) saturate(1.04);
-    transform: scale(1.06);
-  }
-
-  .hero-poster-fallback {
-    opacity: 1 !important;
+  .hero-photo {
     transform: none;
     animation: none;
   }
 
-  .hero-media.is-video-ready .hero-poster-fallback {
-    opacity: 1 !important;
+  .hero-ambient {
+    filter: blur(28px) brightness(1) saturate(1.04);
+    transform: scale(1.06);
   }
 
   .hero-depth {

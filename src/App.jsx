@@ -317,119 +317,36 @@ function Header({ menuOpen, setMenuOpen }) {
 }
 
 function Hero() {
-  const videoRef = useRef(null)
   const [ready, setReady] = useState(false)
-  const [videoLoaded, setVideoLoaded] = useState(false)
-  const [videoSrc, setVideoSrc] = useState(null)
 
   useEffect(() => {
-    const reduce = prefersReducedMotion()
     const id = requestAnimationFrame(() => setReady(true))
-
-    if (reduce) {
-      return () => cancelAnimationFrame(id)
-    }
-
-    const clipSrc = asset(heroClip.src)
-    const mobile = window.matchMedia('(max-width: 719px)').matches
-    const attachVideo = () => setVideoSrc(clipSrc)
-    let idleId = 0
-    let timeoutId = 0
-
-    // Phones: attach immediately so muted autoplay + playsinline can start.
-    // Desktop: idle-defer so the poster stays the LCP image.
-    if (mobile) {
-      attachVideo()
-    } else if ('requestIdleCallback' in window) {
-      idleId = window.requestIdleCallback(attachVideo, { timeout: 1800 })
-    } else {
-      timeoutId = window.setTimeout(attachVideo, 400)
-    }
-
-    return () => {
-      cancelAnimationFrame(id)
-      if (idleId && 'cancelIdleCallback' in window) window.cancelIdleCallback(idleId)
-      if (timeoutId) window.clearTimeout(timeoutId)
-    }
+    return () => cancelAnimationFrame(id)
   }, [])
 
-  useEffect(() => {
-    const reduce = prefersReducedMotion()
-    const el = videoRef.current
-    if (!el || !videoSrc || reduce) return undefined
-
-    el.muted = true
-    el.defaultMuted = true
-    el.playsInline = true
-    el.setAttribute('playsinline', '')
-    el.setAttribute('webkit-playsinline', '')
-    el.setAttribute('muted', '')
-
-    const tryPlay = () => {
-      const play = el.play()
-      if (play && typeof play.then === 'function') {
-        play.then(() => setVideoLoaded(true)).catch(() => {})
-      } else if (!el.paused) {
-        setVideoLoaded(true)
-      }
-    }
-
-    const onReady = () => {
-      tryPlay()
-    }
-
-    if (el.readyState >= 2) onReady()
-    else el.addEventListener('loadeddata', onReady)
-    el.addEventListener('canplay', tryPlay)
-    tryPlay()
-
-    return () => {
-      el.removeEventListener('loadeddata', onReady)
-      el.removeEventListener('canplay', tryPlay)
-    }
-  }, [videoSrc])
-
-  const posterSrc = asset(heroClip.poster)
+  const imageSrc = asset(heroClip.image ?? heroClip.poster)
 
   return (
     <section className={`hero${ready ? ' is-ready' : ''}`} id="top">
-      <div
-        className={`hero-media${videoLoaded ? ' is-video-ready' : ''}`}
-        aria-hidden="true"
-      >
-        {/* Desktop ambient: same poster, blurred + scaled — fills letterbox void */}
+      <div className="hero-media" aria-hidden="true">
         <img
           className="hero-ambient"
-          src={posterSrc}
+          src={imageSrc}
           alt=""
-          width="720"
-          height="1280"
+          width="1920"
+          height="640"
           decoding="async"
           fetchPriority="low"
         />
         <div className="hero-frame">
           <img
-            className="hero-poster-fallback"
-            src={posterSrc}
+            className="hero-photo"
+            src={imageSrc}
             alt=""
-            width="720"
-            height="1280"
+            width="1920"
+            height="640"
             decoding="async"
             fetchPriority="high"
-          />
-          <video
-            ref={videoRef}
-            className={`hero-video${videoLoaded ? ' is-loaded' : ''}`}
-            src={videoSrc ?? undefined}
-            poster={posterSrc}
-            width="720"
-            height="1280"
-            muted
-            loop
-            playsInline
-            autoPlay={Boolean(videoSrc)}
-            preload={videoSrc ? 'metadata' : 'none'}
-            disablePictureInPicture
           />
         </div>
         <div className="hero-veil" />

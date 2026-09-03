@@ -313,9 +313,11 @@ export const galleryItems = [
 
 /** Salon atmosphere clip — full-bleed muted loop behind the hero. */
 export const heroClip = {
-  src: 'video/hero.mp4',
-  poster: 'video/hero-poster.webp',
-  label: 'Атмосфера салона УНО',
+  image: 'images/hero-interior.webp',
+  poster: 'images/hero-interior.webp',
+  /** Legacy clip — kept in repo, not autoplayed in hero */
+  video: 'video/hero.mp4',
+  label: 'Интерьер салона УНО',
 }
 
 export const galleryFilters = [
