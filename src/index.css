@@ -1765,12 +1765,18 @@ button {
 }
 
 /* Sticky CTA — one clear primary */
+/* Keep cookie banner above sticky bar so both stay usable on mobile */
+body:has(.sticky-cta.is-visible) .cookie-banner {
+  bottom: var(--sticky-h);
+  padding-bottom: 1rem;
+}
+
 .sticky-cta {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 50;
+  z-index: 130;
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 0.65rem;

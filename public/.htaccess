@@ -1,0 +1,35 @@
+# Security headers for Apache / Reg.ru static hosting (uno-saratov-64.ru)
+# Do not put FTP credentials or secrets in this file.
+
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  Header set Cross-Origin-Opener-Policy "same-origin"
+  # CSP: self + Google Fonts + Yandex Maps widget (click-to-load iframe)
+  Header set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; img-src 'self' data: blob:; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; frame-src https://yandex.ru https://*.yandex.ru; connect-src 'self'"
+</IfModule>
+
+# Deny access to dotfiles except .htaccess itself
+<IfModule mod_authz_core.c>
+  <FilesMatch "^\.">
+    Require all denied
+  </FilesMatch>
+  <Files ".htaccess">
+    Require all denied
+  </Files>
+</IfModule>
+
+# Cache static assets (safe for hashed Vite builds)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 30 days"
+  ExpiresByType application/javascript "access plus 30 days"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType image/avif "access plus 30 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType font/woff2 "access plus 30 days"
+</IfModule>

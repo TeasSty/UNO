@@ -25,20 +25,22 @@ function legalHref(page) {
   return `${base}${page}.html`
 }
 
+const EXT_REL = 'noopener noreferrer'
+
 function MessengerLinks({ className = 'block-link', showPhone = false }) {
   return (
     <>
-      <a className={className} href={salon.vk} target="_blank" rel="noreferrer">
+      <a className={className} href={salon.vk} target="_blank" rel={EXT_REL}>
         ВКонтакте — запись
       </a>
-      <a className={className} href={salon.telegram} target="_blank" rel="noreferrer">
+      <a className={className} href={salon.telegram} target="_blank" rel={EXT_REL}>
         Telegram
       </a>
       <a
         className={className}
         href={salon.max.href}
         target="_blank"
-        rel="noreferrer"
+        rel={EXT_REL}
         title={`Написать в MAX: ${salon.max.display}`}
       >
         MAX{showPhone ? ` ${salon.max.display}` : ''}
@@ -102,7 +104,8 @@ function usePastHero() {
 
     const check = () => {
       const { bottom } = hero.getBoundingClientRect()
-      setPastHero(bottom <= -120)
+      // Show as soon as hero leaves the viewport — earlier = more calls.
+      setPastHero(bottom <= 8)
     }
 
     check()
@@ -258,8 +261,8 @@ function Header({ menuOpen, setMenuOpen }) {
               </a>
             ))}
           </div>
-          <a className="btn btn-primary header-book" href={BOOK_VK} target="_blank" rel="noreferrer">
-            Записаться
+          <a className="btn btn-primary header-book" href={BOOK_VK} target="_blank" rel={EXT_REL}>
+            Записаться в VK
           </a>
           <a
             className="header-phone-mobile"
@@ -301,13 +304,13 @@ function Header({ menuOpen, setMenuOpen }) {
               </a>
             ))}
           </div>
-          <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel="noreferrer">
+          <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel={EXT_REL}>
             Записаться в VK
           </a>
-          <a className="btn btn-secondary" href={BOOK_TG} target="_blank" rel="noreferrer">
+          <a className="btn btn-secondary" href={BOOK_TG} target="_blank" rel={EXT_REL}>
             Telegram
           </a>
-          <a className="btn btn-secondary" href={BOOK_MAX} target="_blank" rel="noreferrer">
+          <a className="btn btn-secondary" href={BOOK_MAX} target="_blank" rel={EXT_REL}>
             MAX
           </a>
         </div>
@@ -361,7 +364,7 @@ function Hero() {
       <div className="container hero-stage">
         <div className="hero-content">
           <p className="hero-loc hero-enter" data-hero-step="0">
-            Салон красоты · Саратов
+            Салон красоты · Саратов · Менякина, 4
           </p>
           <h1 className="hero-brand hero-enter" data-hero-step="1">
             <img
@@ -374,15 +377,15 @@ function Hero() {
             />
           </h1>
           <p className="lead hero-enter" data-hero-step="2">
-            От точного штриха до цельного образа — полный цикл beauty-услуг в одном месте.
+            Волосы, ногти, брови, косметология — полный цикл в одном месте. Запись в VK или по телефону.
           </p>
           <div className="hero-cta hero-enter" data-hero-step="3">
-            <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
-              <span>Записаться</span>
+            <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel={EXT_REL}>
+              <span>Записаться в VK</span>
               <span className="hero-cta-arrow" aria-hidden="true">↗</span>
             </a>
-            <a className="text-link text-link-on-dark" href="#services">
-              Услуги и цены
+            <a className="text-link text-link-on-dark" href={BOOK_PHONE}>
+              Позвонить
             </a>
           </div>
         </div>
@@ -422,15 +425,15 @@ function BookingSteps() {
         </ol>
         <p className="booking-note" data-delay style={{ '--reveal-delay': '360ms' }}>
           Готовы записаться?{' '}
-          <a href={BOOK_VK} target="_blank" rel="noreferrer">
+          <a href={BOOK_VK} target="_blank" rel={EXT_REL}>
             Напишите в VK
           </a>
           ,{' '}
-          <a href={BOOK_TG} target="_blank" rel="noreferrer">
+          <a href={BOOK_TG} target="_blank" rel={EXT_REL}>
             Telegram
           </a>{' '}
           или{' '}
-          <a href={BOOK_MAX} target="_blank" rel="noreferrer">
+          <a href={BOOK_MAX} target="_blank" rel={EXT_REL}>
             MAX
           </a>{' '}
           — либо{' '}
@@ -769,7 +772,7 @@ function Contacts() {
             <div>
               <dt>Адрес</dt>
               <dd>
-                <a href={salon.mapLink} target="_blank" rel="noreferrer">
+                <a href={salon.mapLink} target="_blank" rel={EXT_REL}>
                   {salon.address}
                 </a>
               </dd>
@@ -800,7 +803,7 @@ function Contacts() {
             </div>
           </dl>
           <div className="section-cta">
-            <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel="noreferrer">
+            <a className="btn btn-primary btn-lg" href={BOOK_VK} target="_blank" rel={EXT_REL}>
               Записаться в VK
             </a>
             <a className="text-link" href={BOOK_PHONE}>
@@ -820,6 +823,7 @@ function Contacts() {
               loading="lazy"
               tabIndex={-1}
               referrerPolicy="no-referrer-when-downgrade"
+              sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
               allowFullScreen
             />
           ) : (
@@ -858,19 +862,19 @@ function Footer() {
         </div>
 
         <div className="footer-row footer-row-messengers" aria-label="Мессенджеры">
-          <a href={salon.vk} target="_blank" rel="noreferrer">
+          <a href={salon.vk} target="_blank" rel={EXT_REL}>
             VK
           </a>
           <span className="footer-sep" aria-hidden="true">
             |
           </span>
-          <a href={salon.telegram} target="_blank" rel="noreferrer">
+          <a href={salon.telegram} target="_blank" rel={EXT_REL}>
             Telegram
           </a>
           <span className="footer-sep" aria-hidden="true">
             |
           </span>
-          <a href={salon.max.href} target="_blank" rel="noreferrer">
+          <a href={salon.max.href} target="_blank" rel={EXT_REL}>
             MAX
           </a>
         </div>
@@ -911,8 +915,8 @@ function StickyCta({ visible }) {
       <a className="sticky-cta-secondary" href={BOOK_PHONE}>
         Позвонить
       </a>
-      <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel="noreferrer">
-        Записаться
+      <a className="btn btn-primary" href={BOOK_VK} target="_blank" rel={EXT_REL}>
+        Записаться в VK
       </a>
     </div>
   )

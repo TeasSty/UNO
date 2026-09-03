@@ -50,3 +50,13 @@ _vk_clips*.html
 _vk_videos.html
 
 _vk_video_log.txt
+
+# Local scrapes / retouch trials — may contain session tokens; never commit
+scripts/_vk_*.html
+scripts/_frames/
+scripts/_retouch_trial/
+scripts/__pycache__/
+*.pyc
+uno-saratov-64-dist.zip
+audit-*.png
+ref-*.png
