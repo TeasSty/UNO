@@ -1450,10 +1450,6 @@ button {
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.gallery-caption {
-  display: none;
-}
-
 .gallery-more {
   display: flex;
   justify-content: center;
@@ -1474,31 +1470,6 @@ button {
 @media (hover: hover) and (min-width: 720px) {
   .gallery-item:hover img {
     transform: scale(1.08);
-  }
-
-  .gallery-caption {
-    display: block;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 1.75rem 0.85rem 0.75rem;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    color: #fff;
-    background: linear-gradient(180deg, transparent, rgba(20, 18, 16, 0.72));
-    opacity: 0;
-    transform: translateY(8px);
-    transition:
-      opacity 0.35s ease,
-      transform 0.35s ease;
-    pointer-events: none;
-  }
-
-  .gallery-item:hover .gallery-caption {
-    opacity: 1;
-    transform: none;
   }
 }
 
@@ -1847,12 +1818,6 @@ button {
 /* yet-another-react-lightbox — subtle brand polish */
 .yarl__container {
   font-family: var(--font);
-}
-
-.yarl__slide_title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.78);
 }
 
 @media (max-width: 719px) {
@@ -2306,7 +2271,6 @@ button {
   .hero-cta-arrow,
   .hero-scroll-cue i::after,
   .gallery-item img,
-  .gallery-caption,
   .map-wrap,
   .tabs-indicator,
   .price-acc-body,

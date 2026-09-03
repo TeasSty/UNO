@@ -662,8 +662,7 @@ function Gallery() {
     () =>
       items.map((item) => ({
         src: asset(item.src),
-        alt: item.alt,
-        title: item.alt,
+        alt: item.alt || '',
       })),
     [items],
   )
@@ -708,12 +707,12 @@ function Gallery() {
               data-delay
               style={{ '--reveal-delay': `${120 + (i % 8) * 45}ms` }}
               onClick={() => openLightbox(i)}
-              aria-label={`Открыть: ${item.alt}`}
+              aria-label="Открыть фото"
             >
               <span className="gallery-item-media">
                 <img
                   src={asset(item.src)}
-                  alt={item.alt}
+                  alt=""
                   loading={i < 4 ? 'eager' : 'lazy'}
                   decoding="async"
                   width={item.w || 600}
@@ -721,7 +720,6 @@ function Gallery() {
                   sizes="(min-width: 960px) 30vw, (min-width: 720px) 33vw, 50vw"
                 />
               </span>
-              <span className="gallery-caption">{item.alt}</span>
             </button>
           ))}
         </div>
