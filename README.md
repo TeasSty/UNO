@@ -16,7 +16,9 @@ npm run build
 npm run preview
 ```
 
-Локально `base` = `/`. Для GitHub Pages при сборке задаётся `VITE_BASE=/UNO/`.
+Локально и для Reg.ru (`npm run build:reg`) `base` = `/`. Для GitHub Pages в Actions задаётся `VITE_BASE=/UNO/`.
+
+Продакшен на домене **uno-saratov-64.ru**: см. [DEPLOY-REG.md](DEPLOY-REG.md).
 
 ## Публикация на GitHub Pages
 
