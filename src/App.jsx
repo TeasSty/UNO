@@ -634,14 +634,30 @@ function About() {
   )
 }
 
+const GALLERY_INITIAL = 12
+const GALLERY_BATCH = 8
+
 function Gallery() {
   const [filter, setFilter] = useState('all')
+  const [visibleCount, setVisibleCount] = useState(GALLERY_INITIAL)
   const [lightboxIndex, setLightboxIndex] = useState(-1)
   const [Lightbox, setLightbox] = useState(null)
+
+  const activeFilters = useMemo(() => {
+    return galleryFilters.filter((f) => {
+      if (f.id === 'all') return true
+      return galleryItems.filter((g) => g.cat === f.id).length >= 3
+    })
+  }, [])
+
   const items = useMemo(
     () => (filter === 'all' ? galleryItems : galleryItems.filter((g) => g.cat === filter)),
     [filter],
   )
+  const visibleItems = useMemo(() => items.slice(0, visibleCount), [items, visibleCount])
+  const hasMore = visibleCount < items.length
+  const remaining = Math.max(0, items.length - visibleCount)
+
   const slides = useMemo(
     () =>
       items.map((item) => ({
@@ -654,29 +670,17 @@ function Gallery() {
 
   useEffect(() => {
     setLightboxIndex(-1)
+    setVisibleCount(GALLERY_INITIAL)
   }, [filter])
 
-  useEffect(() => {
-    let cancelled = false
-    Promise.all([
-      import('yet-another-react-lightbox'),
-      import('yet-another-react-lightbox/styles.css'),
-    ]).then(([mod]) => {
-      if (!cancelled) setLightbox(() => mod.default)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
   const openLightbox = (index) => {
+    setLightboxIndex(index)
     if (!Lightbox) {
       Promise.all([
         import('yet-another-react-lightbox'),
         import('yet-another-react-lightbox/styles.css'),
       ]).then(([mod]) => setLightbox(() => mod.default))
     }
-    setLightboxIndex(index)
   }
 
   return (
@@ -689,14 +693,14 @@ function Gallery() {
         </div>
         <div data-delay style={{ '--reveal-delay': '80ms' }}>
           <SlidingTabs
-            items={galleryFilters}
+            items={activeFilters}
             activeId={filter}
             onChange={setFilter}
             ariaLabel="Фильтр галереи"
           />
         </div>
         <div className="gallery-grid">
-          {items.map((item, i) => (
+          {visibleItems.map((item, i) => (
             <button
               key={item.src}
               type="button"
@@ -707,12 +711,32 @@ function Gallery() {
               aria-label={`Открыть: ${item.alt}`}
             >
               <span className="gallery-item-media">
-                <img src={asset(item.src)} alt={item.alt} loading="lazy" width="600" height="800" />
+                <img
+                  src={asset(item.src)}
+                  alt={item.alt}
+                  loading={i < 4 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  width={item.w || 600}
+                  height={item.h || 800}
+                  sizes="(min-width: 960px) 30vw, (min-width: 720px) 33vw, 50vw"
+                />
               </span>
               <span className="gallery-caption">{item.alt}</span>
             </button>
           ))}
         </div>
+        {hasMore ? (
+          <div className="gallery-more" data-delay style={{ '--reveal-delay': '160ms' }}>
+            <button
+              type="button"
+              className="btn btn-ghost gallery-more-btn"
+              onClick={() => setVisibleCount((n) => Math.min(n + GALLERY_BATCH, items.length))}
+            >
+              Показать ещё
+              <span className="gallery-more-count">ещё {remaining}</span>
+            </button>
+          </div>
+        ) : null}
       </div>
       {Lightbox ? (
         <Lightbox
