@@ -399,8 +399,8 @@ function Hero() {
           className="hero-poster-fallback"
           src={asset(heroClip.poster)}
           alt=""
-          width="1080"
-          height="1920"
+          width="720"
+          height="1280"
           decoding="async"
           fetchPriority="high"
         />
@@ -409,6 +409,8 @@ function Hero() {
           className={`hero-video${videoLoaded ? ' is-loaded' : ''}`}
           src={videoSrc ?? undefined}
           poster={asset(heroClip.poster)}
+          width="720"
+          height="1280"
           muted
           loop
           playsInline

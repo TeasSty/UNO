@@ -545,7 +545,7 @@ button {
   inset: 0;
   z-index: -1;
   overflow: hidden;
-  background: #141210;
+  background: #2a2420;
   pointer-events: none;
 }
 
@@ -559,6 +559,7 @@ button {
   transform: none;
   transition: opacity 1.4s ease;
   pointer-events: none;
+  filter: brightness(1.12) contrast(1.02) saturate(1.06);
 }
 
 .hero-video.is-loaded {
@@ -579,6 +580,7 @@ button {
   animation: hero-poster-kenburns 28s var(--ease-premium) infinite alternate;
   transition: opacity 1.4s ease;
   pointer-events: none;
+  filter: brightness(1.12) contrast(1.02) saturate(1.06);
 }
 
 .hero-media.is-video-ready .hero-poster-fallback {
@@ -608,7 +610,7 @@ button {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.052;
+  opacity: 0.03;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
 }
@@ -619,42 +621,42 @@ button {
   background:
     linear-gradient(
       180deg,
-      rgba(12, 11, 10, 0.46) 0%,
-      rgba(12, 11, 10, 0.06) 32%,
-      rgba(12, 11, 10, 0.28) 56%,
-      rgba(12, 11, 10, 0.94) 100%
+      rgba(20, 18, 16, 0.22) 0%,
+      rgba(20, 18, 16, 0.02) 34%,
+      rgba(20, 18, 16, 0.14) 58%,
+      rgba(20, 18, 16, 0.62) 100%
     ),
     linear-gradient(
       100deg,
-      rgba(12, 11, 10, 0.94) 0%,
-      rgba(12, 11, 10, 0.78) 24%,
-      rgba(12, 11, 10, 0.42) 46%,
-      rgba(12, 11, 10, 0.12) 68%,
-      rgba(12, 11, 10, 0.04) 82%
+      rgba(20, 18, 16, 0.72) 0%,
+      rgba(20, 18, 16, 0.48) 26%,
+      rgba(20, 18, 16, 0.2) 48%,
+      rgba(20, 18, 16, 0.06) 70%,
+      transparent 86%
     );
   pointer-events: none;
 }
 
-/* Layered vignette depth — CSS-only, no WebGL */
+/* Soft text-side shade — CSS-only, no heavy vignette */
 .hero-depth {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 58% 52% at 66% 42%, transparent 28%, rgba(12, 11, 10, 0.44) 100%),
-    radial-gradient(ellipse 46% 36% at 78% 18%, rgba(184, 28, 34, 0.12), transparent 72%);
-  opacity: 0.88;
+    radial-gradient(ellipse 52% 48% at 68% 40%, transparent 42%, rgba(20, 18, 16, 0.22) 100%),
+    radial-gradient(ellipse 46% 36% at 78% 18%, rgba(184, 28, 34, 0.08), transparent 72%);
+  opacity: 0.65;
   animation: hero-vignette 16s ease-in-out infinite alternate;
 }
 
 @keyframes hero-vignette {
   from {
-    opacity: 0.7;
+    opacity: 0.52;
     transform: scale(1);
   }
   to {
-    opacity: 1;
-    transform: scale(1.03);
+    opacity: 0.72;
+    transform: scale(1.02);
   }
 }
 
@@ -1866,8 +1868,8 @@ button {
 
   .hero-veil {
     background:
-      linear-gradient(180deg, rgba(12, 11, 10, 0.35) 0%, rgba(12, 11, 10, 0.02) 28%, rgba(12, 11, 10, 0.5) 53%, rgba(12, 11, 10, 0.96) 100%),
-      linear-gradient(90deg, rgba(12, 11, 10, 0.38), transparent 72%);
+      linear-gradient(180deg, rgba(20, 18, 16, 0.18) 0%, rgba(20, 18, 16, 0.01) 30%, rgba(20, 18, 16, 0.28) 56%, rgba(20, 18, 16, 0.68) 100%),
+      linear-gradient(90deg, rgba(20, 18, 16, 0.28), transparent 74%);
   }
 
   .hero-stage {
@@ -2076,18 +2078,18 @@ button {
     background:
       linear-gradient(
         180deg,
-        rgba(12, 11, 10, 0.42) 0%,
-        rgba(12, 11, 10, 0.04) 30%,
-        rgba(12, 11, 10, 0.22) 54%,
-        rgba(12, 11, 10, 0.92) 100%
+        rgba(20, 18, 16, 0.2) 0%,
+        rgba(20, 18, 16, 0.02) 32%,
+        rgba(20, 18, 16, 0.12) 56%,
+        rgba(20, 18, 16, 0.58) 100%
       ),
       linear-gradient(
         100deg,
-        rgba(12, 11, 10, 0.96) 0%,
-        rgba(12, 11, 10, 0.82) 20%,
-        rgba(12, 11, 10, 0.48) 42%,
-        rgba(12, 11, 10, 0.14) 62%,
-        rgba(12, 11, 10, 0.03) 78%
+        rgba(20, 18, 16, 0.74) 0%,
+        rgba(20, 18, 16, 0.5) 22%,
+        rgba(20, 18, 16, 0.22) 44%,
+        rgba(20, 18, 16, 0.06) 64%,
+        transparent 80%
       );
   }
 
