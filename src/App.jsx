@@ -389,35 +389,49 @@ function Hero() {
     }
   }, [videoSrc])
 
+  const posterSrc = asset(heroClip.poster)
+
   return (
     <section className={`hero${ready ? ' is-ready' : ''}`} id="top">
       <div
         className={`hero-media${videoLoaded ? ' is-video-ready' : ''}`}
         aria-hidden="true"
       >
+        {/* Desktop ambient: same poster, blurred + scaled — fills letterbox void */}
         <img
-          className="hero-poster-fallback"
-          src={asset(heroClip.poster)}
+          className="hero-ambient"
+          src={posterSrc}
           alt=""
           width="720"
           height="1280"
           decoding="async"
-          fetchPriority="high"
+          fetchPriority="low"
         />
-        <video
-          ref={videoRef}
-          className={`hero-video${videoLoaded ? ' is-loaded' : ''}`}
-          src={videoSrc ?? undefined}
-          poster={asset(heroClip.poster)}
-          width="720"
-          height="1280"
-          muted
-          loop
-          playsInline
-          autoPlay={Boolean(videoSrc)}
-          preload={videoSrc ? 'metadata' : 'none'}
-          disablePictureInPicture
-        />
+        <div className="hero-frame">
+          <img
+            className="hero-poster-fallback"
+            src={posterSrc}
+            alt=""
+            width="720"
+            height="1280"
+            decoding="async"
+            fetchPriority="high"
+          />
+          <video
+            ref={videoRef}
+            className={`hero-video${videoLoaded ? ' is-loaded' : ''}`}
+            src={videoSrc ?? undefined}
+            poster={posterSrc}
+            width="720"
+            height="1280"
+            muted
+            loop
+            playsInline
+            autoPlay={Boolean(videoSrc)}
+            preload={videoSrc ? 'metadata' : 'none'}
+            disablePictureInPicture
+          />
+        </div>
         <div className="hero-veil" />
         <div className="hero-depth" />
         <div className="hero-grain" />
