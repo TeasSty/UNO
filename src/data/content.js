@@ -314,6 +314,8 @@ export const galleryItems = [
 /** Salon atmosphere clip — full-bleed muted loop behind the hero. */
 export const heroClip = {
   image: 'images/hero-interior.webp',
+  image2x: 'images/hero-interior@2x.webp',
+  imageAvif: 'images/hero-interior.avif',
   poster: 'images/hero-interior.webp',
   /** Legacy clip — kept in repo, not autoplayed in hero */
   video: 'video/hero.mp4',

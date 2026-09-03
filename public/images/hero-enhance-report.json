@@ -1,0 +1,48 @@
+{
+  "source": {
+    "path": "C:\\Users\\popoo\\Desktop\\UNO\\public\\images\\hero-interior.webp",
+    "size": [
+      1818,
+      606
+    ],
+    "bytes": 124426
+  },
+  "tools": [
+    "spandrel+Real-ESRGAN_x2plus",
+    "opencv INTER_LANCZOS4 2.0x + denoise + unsharp"
+  ],
+  "outputs": [
+    {
+      "path": "public\\images\\hero-interior@2x.webp",
+      "size": [
+        3636,
+        1212
+      ],
+      "bytes": 306600
+    },
+    {
+      "path": "public\\images\\hero-interior.webp",
+      "size": [
+        2560,
+        853
+      ],
+      "bytes": 213776
+    },
+    {
+      "path": "public\\video\\hero-poster.webp",
+      "size": [
+        2560,
+        853
+      ],
+      "bytes": 192490
+    },
+    {
+      "path": "public\\images\\hero-interior.avif",
+      "size": [
+        2560,
+        853
+      ],
+      "bytes": 187623
+    }
+  ]
+}

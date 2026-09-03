@@ -325,29 +325,34 @@ function Hero() {
   }, [])
 
   const imageSrc = asset(heroClip.image ?? heroClip.poster)
+  const imageSrc2x = heroClip.image2x ? asset(heroClip.image2x) : undefined
+  const imageAvif = heroClip.imageAvif ? asset(heroClip.imageAvif) : undefined
+  const heroSrcSet = imageSrc2x ? `${imageSrc} 2560w, ${imageSrc2x} 3636w` : undefined
+
+  const heroPicture = (className, fetchPriority) => (
+    <picture>
+      {imageAvif ? <source type="image/avif" srcSet={imageAvif} sizes="100vw" /> : null}
+      <source type="image/webp" srcSet={heroSrcSet ?? imageSrc} sizes="100vw" />
+      <img
+        className={className}
+        src={imageSrc}
+        srcSet={heroSrcSet}
+        sizes={heroSrcSet ? '100vw' : undefined}
+        alt=""
+        width="2560"
+        height="853"
+        decoding="async"
+        fetchPriority={fetchPriority}
+      />
+    </picture>
+  )
 
   return (
     <section className={`hero${ready ? ' is-ready' : ''}`} id="top">
       <div className="hero-media" aria-hidden="true">
-        <img
-          className="hero-ambient"
-          src={imageSrc}
-          alt=""
-          width="1920"
-          height="640"
-          decoding="async"
-          fetchPriority="low"
-        />
+        {heroPicture('hero-ambient', 'low')}
         <div className="hero-frame">
-          <img
-            className="hero-photo"
-            src={imageSrc}
-            alt=""
-            width="1920"
-            height="640"
-            decoding="async"
-            fetchPriority="high"
-          />
+          {heroPicture('hero-photo', 'high')}
         </div>
         <div className="hero-veil" />
         <div className="hero-depth" />
