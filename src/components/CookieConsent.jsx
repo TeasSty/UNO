@@ -79,7 +79,7 @@ export default function CookieConsent() {
   if (!visible) return null
 
   return (
-    <div className="cookie-banner" role="dialog" aria-labelledby="cookie-title" aria-live="polite">
+    <div className="cookie-banner" role="region" aria-labelledby="cookie-title">
       <div className="container cookie-banner-inner">
         <div>
           <p id="cookie-title" className="cookie-banner-title">

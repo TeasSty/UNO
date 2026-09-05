@@ -142,9 +142,19 @@ function useReveal() {
   }, [])
 }
 
-function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist', className = '' }) {
+function SlidingTabs({
+  items,
+  activeId,
+  onChange,
+  ariaLabel,
+  role = 'tablist',
+  className = '',
+  idPrefix,
+}) {
   const listRef = useRef(null)
+  const btnRefs = useRef([])
   const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false })
+  const isTablist = role === 'tablist'
 
   const updateIndicator = () => {
     const list = listRef.current
@@ -155,6 +165,18 @@ function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist', c
       left: active.offsetLeft - list.scrollLeft,
       width: active.offsetWidth,
       ready: true,
+    })
+  }
+
+  const focusTab = (index) => {
+    const item = items[index]
+    if (!item) return
+    onChange(item.id)
+    requestAnimationFrame(() => {
+      const btn = btnRefs.current[index]
+      btn?.focus()
+      const list = listRef.current
+      if (list && btn) scrollTabHorizontally(list, btn)
     })
   }
 
@@ -185,6 +207,27 @@ function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist', c
       role={role}
       aria-label={ariaLabel}
       ref={listRef}
+      onKeyDown={
+        isTablist
+          ? (e) => {
+              const i = items.findIndex((t) => t.id === activeId)
+              if (i < 0) return
+              if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault()
+                focusTab((i + 1) % items.length)
+              } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault()
+                focusTab((i - 1 + items.length) % items.length)
+              } else if (e.key === 'Home') {
+                e.preventDefault()
+                focusTab(0)
+              } else if (e.key === 'End') {
+                e.preventDefault()
+                focusTab(items.length - 1)
+              }
+            }
+          : undefined
+      }
     >
       <span
         className={`tabs-indicator${indicator.ready ? ' is-ready' : ''}`}
@@ -194,12 +237,19 @@ function SlidingTabs({ items, activeId, onChange, ariaLabel, role = 'tablist', c
         }}
         aria-hidden="true"
       />
-      {items.map((t) => (
+      {items.map((t, i) => (
         <button
           key={t.id}
           type="button"
-          role={role === 'tablist' ? 'tab' : undefined}
-          aria-selected={t.id === activeId}
+          ref={(el) => {
+            btnRefs.current[i] = el
+          }}
+          id={idPrefix ? `${idPrefix}-tab-${t.id}` : undefined}
+          role={isTablist ? 'tab' : undefined}
+          aria-selected={isTablist ? t.id === activeId : undefined}
+          aria-pressed={!isTablist ? t.id === activeId : undefined}
+          aria-controls={isTablist && idPrefix ? `${idPrefix}-panel-${t.id}` : undefined}
+          tabIndex={isTablist ? (t.id === activeId ? 0 : -1) : undefined}
           className={`tab${t.id === activeId ? ' is-active' : ''}`}
           onClick={(e) => {
             onChange(t.id)
@@ -334,7 +384,16 @@ function Hero() {
 
   const heroPicture = (className, fetchPriority) => (
     <picture>
-      {imageAvif ? <source type="image/avif" srcSet={imageAvif} sizes="100vw" /> : null}
+      {/* AVIF is 1x-only (2560w). Prefer WebP srcset so retina gets @2x and the
+          preload in index.html is not wasted on a second AVIF fetch. */}
+      {imageAvif ? (
+        <source
+          type="image/avif"
+          srcSet={imageAvif}
+          sizes="100vw"
+          media="(max-resolution: 1.49dppx)"
+        />
+      ) : null}
       <source type="image/webp" srcSet={heroSrcSet ?? imageSrc} sizes="100vw" />
       <img
         className={className}
@@ -491,11 +550,15 @@ function Services({ tabId, setTabId }) {
             onChange={setTabId}
             ariaLabel="Категории услуг"
             className="tabs--price"
+            idPrefix="service"
           />
         </div>
 
         <div
           className={`price-panel price-panel--${tab.id}`}
+          role="tabpanel"
+          id={`service-panel-${tab.id}`}
+          aria-labelledby={`service-tab-${tab.id}`}
           data-delay
           style={{ '--reveal-delay': '160ms' }}
         >
@@ -510,12 +573,15 @@ function Services({ tabId, setTabId }) {
           <div className="price-compact">
             {tab.groups.map((group, index) => {
               const open = openGroups.has(index)
+              const accId = `price-${tab.id}-${index}`
               return (
                 <div key={group.title} className={`price-acc${open ? ' is-open' : ''}`}>
                   <button
                     type="button"
                     className="price-acc-head"
+                    id={`${accId}-head`}
                     aria-expanded={open}
+                    aria-controls={`${accId}-body`}
                     onClick={() => toggleGroup(index)}
                   >
                     <span>{group.title}</span>
@@ -524,7 +590,13 @@ function Services({ tabId, setTabId }) {
                       <span className="price-acc-chevron" aria-hidden="true" />
                     </span>
                   </button>
-                  <div className="price-acc-body">
+                  <div
+                    className="price-acc-body"
+                    id={`${accId}-body`}
+                    role="region"
+                    aria-labelledby={`${accId}-head`}
+                    aria-hidden={!open}
+                  >
                     <div className="price-acc-body-inner">
                       <ul className="price-rows">
                         {group.items.map((item) => (
@@ -681,7 +753,9 @@ function Gallery() {
       Promise.all([
         import('yet-another-react-lightbox'),
         import('yet-another-react-lightbox/styles.css'),
-      ]).then(([mod]) => setLightbox(() => mod.default))
+      ])
+        .then(([mod]) => setLightbox(() => mod.default))
+        .catch(() => setLightboxIndex(-1))
     }
   }
 
@@ -699,6 +773,7 @@ function Gallery() {
             activeId={filter}
             onChange={setFilter}
             ariaLabel="Фильтр галереи"
+            role="group"
           />
         </div>
         <div className="gallery-grid">
@@ -710,7 +785,7 @@ function Gallery() {
               data-delay
               style={{ '--reveal-delay': `${120 + (i % 8) * 45}ms` }}
               onClick={() => openLightbox(i)}
-              aria-label="Открыть фото"
+              aria-label={item.alt ? `Открыть фото: ${item.alt}` : 'Открыть фото'}
             >
               <span className="gallery-item-media">
                 <img
@@ -910,7 +985,7 @@ function StickyCta({ visible }) {
       className={`sticky-cta${visible ? ' is-visible' : ''}`}
       role="region"
       aria-label="Быстрая запись"
-      aria-hidden={!visible}
+      inert={!visible}
     >
       <a className="sticky-cta-secondary" href={BOOK_PHONE}>
         Позвонить

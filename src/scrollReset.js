@@ -1,15 +1,21 @@
+/** Decode location.hash without throwing on malformed percent-encoding (e.g. `#%`). */
+export function decodeLocationHash(hash) {
+  if (!hash || hash.length <= 1) return ''
+  try {
+    return decodeURIComponent(hash.slice(1))
+  } catch {
+    return hash.slice(1)
+  }
+}
+
 /** True when URL targets an in-page anchor (not bare "#" or hero #top). */
 export function hasScrollHash() {
-  const hash = window.location.hash
-  if (hash.length <= 1) return false
-  const id = decodeURIComponent(hash.slice(1))
-  return id !== 'top'
+  const id = decodeLocationHash(window.location.hash)
+  return id !== '' && id !== 'top'
 }
 
 export function hasContactsHash() {
-  const hash = window.location.hash
-  if (hash.length <= 1) return false
-  return decodeURIComponent(hash.slice(1)) === 'contacts'
+  return decodeLocationHash(window.location.hash) === 'contacts'
 }
 
 export function disableScrollRestoration() {
@@ -75,9 +81,8 @@ export function applyEarlyPageScrollReset() {
 }
 
 export function scrollToHashIfPresent(preferSmooth = false) {
-  const hash = window.location.hash
-  if (hash.length <= 1) return
-  const id = decodeURIComponent(hash.slice(1))
+  const id = decodeLocationHash(window.location.hash)
+  if (!id) return
   if (id === 'top') {
     resetPageScroll()
     return
