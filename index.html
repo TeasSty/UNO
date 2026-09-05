@@ -10,8 +10,12 @@
       ;(function () {
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
         function hasAnchor() {
-          var h = location.hash
-          return h.length > 1 && h !== '#top'
+          try {
+            var h = location.hash
+            return h.length > 1 && h !== '#top'
+          } catch (e) {
+            return false
+          }
         }
         function toTop() {
           if (hasAnchor()) return

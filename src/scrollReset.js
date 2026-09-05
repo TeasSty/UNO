@@ -8,14 +8,30 @@ export function decodeLocationHash(hash) {
   }
 }
 
+function currentHash() {
+  try {
+    return window.location.hash || ''
+  } catch {
+    return ''
+  }
+}
+
 /** True when URL targets an in-page anchor (not bare "#" or hero #top). */
 export function hasScrollHash() {
-  const id = decodeLocationHash(window.location.hash)
-  return id !== '' && id !== 'top'
+  try {
+    const id = decodeLocationHash(currentHash())
+    return id !== '' && id !== 'top'
+  } catch {
+    return false
+  }
 }
 
 export function hasContactsHash() {
-  return decodeLocationHash(window.location.hash) === 'contacts'
+  try {
+    return decodeLocationHash(currentHash()) === 'contacts'
+  } catch {
+    return false
+  }
 }
 
 export function disableScrollRestoration() {
@@ -81,7 +97,12 @@ export function applyEarlyPageScrollReset() {
 }
 
 export function scrollToHashIfPresent(preferSmooth = false) {
-  const id = decodeLocationHash(window.location.hash)
+  let id = ''
+  try {
+    id = decodeLocationHash(currentHash())
+  } catch {
+    return
+  }
   if (!id) return
   if (id === 'top') {
     resetPageScroll()
