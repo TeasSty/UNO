@@ -1765,11 +1765,8 @@ button {
 }
 
 /* Sticky CTA — one clear primary */
-/* Keep cookie banner above sticky bar so both stay usable on mobile */
-body:has(.sticky-cta.is-visible) .cookie-banner {
-  bottom: var(--sticky-h);
-  padding-bottom: 1rem;
-}
+/* Cookie banner stays pinned at bottom:0. While it is open it stacks
+   above this bar (higher z-index); after Accept/Decline the CTA shows. */
 
 .sticky-cta {
   position: fixed;
@@ -2334,12 +2331,12 @@ body:has(.sticky-cta.is-visible) .cookie-banner {
   }
 }
 
-/* Cookie consent */
+/* Cookie consent — always pinned to viewport bottom (never lifted for sticky CTA) */
 .cookie-banner {
   position: fixed;
   inset-inline: 0;
   bottom: 0;
-  z-index: 120;
+  z-index: 140;
   padding: 1rem 0 calc(1rem + env(safe-area-inset-bottom));
   background: color-mix(in srgb, var(--surface-elevated) 92%, transparent);
   border-top: 1px solid var(--border-subtle);
